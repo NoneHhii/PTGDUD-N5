@@ -1,10 +1,11 @@
-function App() {
+import DetailPage from "./pages/DetailPage";
 
+function App() {
   return (
-    <>
-      <div className="flex justify-items-center justify-center text-blue-500">Hello world</div>
-    </>
-  )
+    <div>
+      <DetailPage />
+    </div>
+  );
 }
 
-export default App
+export default App;
