@@ -1,6 +1,61 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 function Account() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    address: "",
+    password: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    setFormData({
+      firstName: "Gia",
+      lastName: "Huy",
+      email: "giahuytruonn@gmail.com",
+      address: "Ho Chi Minh Go Vap",
+      password: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+  }, []);
+
+  const validate = () => {
+    let tempErrors = {};
+    const nameRegex = /^[A-Za-zÀ-ỹ\s]+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const addressRegex = /[\w\s,-]+/;
+    const passwordRegex = /^.{6,}$/;
+
+    if (!nameRegex.test(formData.firstName))
+      tempErrors.firstName = "Invalid first name";
+    if (!nameRegex.test(formData.lastName))
+      tempErrors.lastName = "Invalid last name";
+    if (!emailRegex.test(formData.email))
+      tempErrors.email = "Invalid email format";
+    if (!addressRegex.test(formData.address))
+      tempErrors.address = "Invalid address";
+    if (!passwordRegex.test(formData.newPassword))
+      tempErrors.newPassword = "At least 6 characters";
+    if (formData.newPassword !== formData.confirmPassword)
+      tempErrors.confirmPassword = "Passwords do not match";
+
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      alert("Profile updated successfully!");
+    }
+  };
+
   return (
     <div className="md:container md:mx-auto mt-15 h-200">
       <div className="flex justify-between">
@@ -75,117 +130,43 @@ function Account() {
                 Edit Your Profile
               </span>
               <div>
-                <form>
-                  <div class="grid gap-6 mb-6 md:grid-cols-2">
-                    <div>
-                      <label
-                        for="first_name"
-                        class="block mb-2 text-sm font-medium text-black"
-                      >
-                        First name
+                <form
+                  onSubmit={handleSubmit}
+                  className="grid gap-6 md:grid-cols-2"
+                >
+                  {Object.entries(formData).map(([key, value]) => (
+                    <div key={key}>
+                      <label className="block mb-2 text-sm font-medium text-black">
+                        {key.replace(/([A-Z])/g, " $1").toUpperCase()}
                       </label>
                       <input
-                        type="text"
-                        id="first_name"
-                        class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-500 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="John"
-                        required
+                        type={
+                          [
+                            "newPassword",
+                            "confirmPassword",
+                            "password",
+                          ].includes(key)
+                            ? "password"
+                            : "text"
+                        }
+                        value={value}
+                        onChange={(e) =>
+                          setFormData({ ...formData, [key]: e.target.value })
+                        }
+                        className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                        placeholder={value}
                       />
+                      {errors[key] && (
+                        <p className="text-red-500 text-xs">{errors[key]}</p>
+                      )}
                     </div>
-                    <div>
-                      <label
-                        for="last_name"
-                        class="block mb-2 text-sm font-medium text-black"
-                      >
-                        Last name
-                      </label>
-                      <input
-                        type="text"
-                        id="last_name"
-                        class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-500 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Doe"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label
-                        for="company"
-                        class="block mb-2 text-sm font-medium text-black"
-                      >
-                        Email
-                      </label>
-                      <input
-                        type="text"
-                        id="company"
-                        class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-500 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Flowbite"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label
-                        for="phone"
-                        class="block mb-2 text-sm font-medium text-black"
-                      >
-                        Address
-                      </label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-500 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="123-45-678"
-                        pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div class="mb-2">
-                    <label
-                      for="password"
-                      class="block mb-2 text-sm font-medium text-black"
-                    >
-                      Password Changes
-                    </label>
-                    <input
-                      type="password"
-                      id="password"
-                      class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-500 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Current Password"
-                      required
-                    />
-                  </div>
-                  <div class="mb-2">
-                    <input
-                      type="password"
-                      id="confirm_password"
-                      class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-500 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="New Password"
-                      required
-                    />
-                  </div>
-                  <div class="mb-2">
-                    <input
-                      type="password"
-                      id="confirm_password"
-                      class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-500 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Confirm New Password"
-                      required
-                    />
-                  </div>
-                  <div className="flex justify-between">
-                    <div></div>
-
-                    <div className="flex p-5">
-                      <p className="p-3">Cancel</p>
-                      <button
-                        type="submit"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-50 px-5 py-2.5 text-center dark:bg-[#DB4444] dark:hover:bg-[#db2c2c] dark:focus:ring-blue-800"
-                      >
-                        Save changes
-                      </button>
-                    </div>
-                  </div>
+                  ))}
+                  <button
+                    type="submit"
+                    className="col-span-2 text-white bg-[#DB4444] hover:bg-[#db2c2c] font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center"
+                  >
+                    Save Changes
+                  </button>
                 </form>
               </div>
             </div>
