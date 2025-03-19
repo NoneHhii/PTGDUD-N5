@@ -1,17 +1,33 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import SignUp from "./screens/SignUp"; // Import component mới
 import Login from "./screens/Login";
+import { useState } from 'react'
+import './App.css'
+import { useEffect } from 'react';
+import axios from 'axios';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './screens/HomePage';
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css"
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 
 function App() {
+  // const [customers, setcustomers] = useState([]);
+
+  // useEffect(() => {
+  //   axios.get("http://localhost:5000/customers").then((res) => {
+  //     setcustomers(res.data);
+  //   });
+  // }, []);
+
   return (
     <Router>
       <div className="app-container">
         <Header />
         <div className="main-content">
           <Routes>
-            <Route path="/" element={<div className="homepage-content">Nội dung trang chủ</div>} />
+            <Route path="/" element={<HomePage/>} />
             <Route path="/contact" element={<div className="page-content">Trang liên hệ</div>} />
             <Route path="/about" element={<div className="page-content">Trang giới thiệu</div>} />
             <Route path="/signup" element={<SignUp />} />
