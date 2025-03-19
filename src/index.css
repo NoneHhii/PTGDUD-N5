@@ -1,4 +1,9 @@
 @import "tailwindcss";
+/* :root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+>>>>>>> a9642bd9e8d5af877008fb204381c8391c0ef4f0
 
 /* Đảm bảo toàn bộ trang chiếm ít nhất 100% chiều cao màn hình */
 html, body {
@@ -521,3 +526,15 @@ html, body {
       align-items: flex-start;
     }
   }
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}

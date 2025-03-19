@@ -42,8 +42,12 @@ const Header = () => {
                     <Link to="/login" className="icon-link">
                         <FaUser className="icon" />
                     </Link>
-                    <FaHeart className="icon" />
-                    <FaShoppingCart className="icon" />
+                    <Link to="/wishlist" className="icon-link">
+                        <FaHeart className="icon" />
+                    </Link>
+                    <Link to="/cart" className="icon-link">
+                        <FaShoppingCart className="icon" />
+                    </Link>
                 </div>
             </nav>
         </header>
