@@ -1,0 +1,7 @@
+.card_about:hover span {
+  color: white;
+}
+
+.card_about:hover .card_about_statitic {
+  background-color: white;
+}

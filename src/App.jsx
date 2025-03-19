@@ -11,6 +11,9 @@ import HomePage from './screens/HomePage';
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css"
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
+import About from "./pages/About";
+import Account from "./pages/Account";
+import Contact from "./pages/Contact";
 
 function App() {
   // const [customers, setcustomers] = useState([]);
@@ -28,8 +31,8 @@ function App() {
         <div className="main-content">
           <Routes>
             <Route path="/" element={<HomePage/>} />
-            <Route path="/contact" element={<div className="page-content">Trang liên hệ</div>} />
-            <Route path="/about" element={<div className="page-content">Trang giới thiệu</div>} />
+            <Route path="/contact" element={<Contact/>} />
+            <Route path="/about" element={<About/>} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<div className="page-content">Trang quên mật khẩu</div>} />
