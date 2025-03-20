@@ -634,7 +634,7 @@ const HomePage = () => {
                 </div>
                 <div className="position-relative">
                     <Slider ref={sliderRef2} {...settingsRow}>
-                        {products.map((product) => (
+                        {Products.map((product) => (
                             <div key={product.id}>
                                 <div className="border rounded text-center mt-3 product card-hover" style={{maxWidth: "270px", maxHeight: "350px"}}>
                                     <div className="position-relative" style={{backgroundColor: "#f4f4f4", minWidth: "100%"}}>
@@ -651,7 +651,7 @@ const HomePage = () => {
                                             style={{top: "10px", right: "10px"}} 
                                             onClick={() => handleSrc(product.id)}
                                         />
-                                        <img src={product.img} alt="" className="img-fluid mx-auto"/>
+                                        <img src={product.image[0]} alt="" className="img-fluid mx-auto" style={{maxHeight: "180px"}}/>
                                         <Button
                                             variant='dark'
                                             className='w-100 add-to-cart '

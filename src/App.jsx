@@ -18,6 +18,7 @@ import { Checkout } from './pages/Checkout/Checkout';
 import { Wishlist } from './pages/Wishlist/Wishlist';
 import { Cart } from './pages/Cart/Cart';
 import { CartProvider } from './pages/Cart/CartContext';
+import SearchPage from "./screens/SearchPage";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -55,6 +56,7 @@ function App() {
               <Route path='/wishlist' element={<Wishlist />} />
               <Route path='/checkout' element={<Checkout></Checkout>}></Route>
               <Route path='*' element={<h1>404 Not Found</h1>} />
+              <Route path="/search" element={<SearchPage/>}/>
             </Routes>
           </div>
           <Footer />

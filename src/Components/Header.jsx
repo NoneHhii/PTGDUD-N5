@@ -1,9 +1,17 @@
 import { FaSearch, FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 const Header = ({user}) => {
     const location = useLocation();
+    const [query, setQuery] = useState();
+    const navigate = useNavigate();
+
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter" && query.trim() !== "") {
+            navigate("/search", { state: { searchKey: query } });
+        }
+    };
 
     return (
         <header className="header">
@@ -38,7 +46,12 @@ const Header = ({user}) => {
                     </li>
                 </ul>
                 <div className="search-bar">
-                    <input type="text" placeholder="What are you looking for?" />
+                    <input 
+                        type="text" 
+                        placeholder="What are you looking for?" 
+                        onChange={(e) => setQuery(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                    />
                     <button><FaSearch /></button>
                 </div>
                 <div className="icons me-2">
