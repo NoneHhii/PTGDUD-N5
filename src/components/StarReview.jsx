@@ -18,7 +18,7 @@ const StarReview = ({ star, text, className }) => {
           alt="star"
         />
       ))}
-      <span className="ml-3">({text})</span>
+      {text && <span className="ml-3">({text})</span>}
     </div>
   );
 };

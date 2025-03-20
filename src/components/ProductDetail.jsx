@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import StarReview from "./StarReview";
 
-const ProductDetail = ({ sizes, colors }) => {
-  const [selectedSize, setSelectedSize] = useState(sizes[2]);
-  const [selectedColor, setSelectedColor] = useState(colors[0]);
+const ProductDetail = ({ product }) => {
+  const [selectedSize, setSelectedSize] = useState(product?.sizes[2]);
+  const [selectedColor, setSelectedColor] = useState(product?.colors[0]);
   const [numOfProduct, setNumOfProduct] = useState(1);
   return (
-    <div className="flex flex-row justify-start">
+    <div className="flex flex-row justify-center">
       <div className="flex flex-col h-full">
         <div className="bg-[#F5F5F5] p-4 place-items-center mb-11">
           <img src="/detail_page/extra1.png" alt="extrapicture" />
@@ -25,22 +25,23 @@ const ProductDetail = ({ sizes, colors }) => {
         <img src="/detail_page/mainproduct.png" alt="mainproduct" />
       </div>
       <div className="flex flex-col w-1/3 pr-3">
-        <h1 className="text-2xl font-semibold">Havic HV G-92 Gamepad</h1>
+        <h1 className="text-2xl font-semibold">{product?.name}</h1>
         <div className="flex flex-row items-center my-4">
-          <StarReview star={4} text={"150 Reviews"} />
+          <StarReview
+            star={product?.star}
+            text={`${product?.reviews} Reviews`}
+          />
           <div className="ml-4 pl-4 border-[#000000] border-l text-[#00FF66] text-sm font-medium">
             In Stock
           </div>
         </div>
         <h2 className="text-2xl font-normal mt-4 mb-6">$192.00</h2>
         <p className="text-base font-normal pb-6 border-b border-[#000000]">
-          PlayStation 5 Controller Skin High quality vinyl with air channel
-          adhesive for easy bubble free install & mess free removal Pressure
-          sensitive.
+          {product?.description}
         </p>
         <div className="flex flex-row items-center">
           <h2 className="text-xl font-normal pr-6 my-6">Colours:</h2>
-          {colors.map((color) => (
+          {product?.colors.map((color) => (
             <button
               key={color}
               className={`w-4 h-4 cursor-pointer mr-4 rounded-full ${
@@ -53,7 +54,7 @@ const ProductDetail = ({ sizes, colors }) => {
         </div>
         <div className="flex flex-row">
           <h2 className="text-xl font-normal pr-6">Size:</h2>
-          {sizes.map((size) => (
+          {product?.sizes.map((size) => (
             <button
               key={size}
               className={`w-8 h-8 border cursor-pointer mr-4 text-sm font-normal rounded ${
@@ -85,7 +86,7 @@ const ProductDetail = ({ sizes, colors }) => {
               +
             </button>
           </div>
-          <button className="flex mx-4 text-[#FAFAFA] text-base font-normal bg-[#DB4444] py-2.75 px-12 rounded cursor-pointer">
+          <button className="flex mx-4 text-[#FAFAFA] text-base font-normal bg-[#DB4444] justify-center items-center h-full w-[165px] rounded cursor-pointer">
             Buy Now
           </button>
           <div className="flex flex-row items-center border rounded-sm p-2.75 cursor-pointer">

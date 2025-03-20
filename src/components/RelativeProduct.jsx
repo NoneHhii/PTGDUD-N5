@@ -41,14 +41,14 @@ const RelativeProduct = () => {
     },
   ];
   return (
-    <div className="flex flex-col justify-start mt-36">
-      <div className="flex flex-row items-center mb-15">
-        <div className="w-5 h-10 rounded-md bg-[#DB4444]"></div>
-        <div className="text-[#DB4444] text-base font-semibold pl-4">
+    <div className="flex flex-col mt-36 w-full">
+      <div className="flex flex-row items-center mb-15 ml-8 2xl:justify-center">
+        <div className="w-5 h-10 rounded-md bg-[#DB4444] 2xl:hidden"></div>
+        <div className="text-[#DB4444] text-base font-semibold pl-4 2xl:text-2xl 2xl:font-semibold">
           Related Item
         </div>
       </div>
-      <div className="flex justify-start gap-7.5">
+      <div className="flex flex-row gap-7.5 justify-center">
         {products.map((product, index) => (
           <CardProduct key={index} {...product} />
         ))}
