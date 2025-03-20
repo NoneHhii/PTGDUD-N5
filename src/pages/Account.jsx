@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 
 function Account({ user }) {
@@ -46,31 +47,32 @@ function Account({ user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const token = localStorage.getItem("token");
     if (validate()) {
       try {
-        const response = await fetch("http://localhost:5000/api/update-user", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: formData.email,
-            name: formData.name,
-            address: formData.address,
-            newPassword: formData.newPassword || undefined,
-          }),
-        });
+        const response = await axios.put(
+          "http://localhost:5000/api/users/update-password",
+          {
+            currentPassword: formData.password,
+            newPassword: formData.newPassword,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        const data = await response.json();
-
-        if (response.ok) {
-          alert(data.message);
-        } else {
-          alert(data.message);
-        }
+        alert(response.data.message);
       } catch (error) {
-        alert("Failed to update user. Please try again.");
+        console.log("Failed to update user. Please try again.", error);
+        alert(error.response?.data?.message || "Có lỗi xảy ra!");
       }
     }
   };
+
   return (
     <div
       className="container container-md mx-auto mt-5"
