@@ -1,7 +1,45 @@
-.card_about:hover span {
+/* About.css */
+.hover-card {
+  transition: all 0.3s ease;
+}
+
+.hover-card:hover {
+  background-color: #db4444;
   color: white;
 }
 
-.card_about:hover .card_about_statitic {
-  background-color: red;
+/* Định dạng cho ảnh responsive */
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Điều chỉnh khoảng cách cho các phần */
+.container {
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+/* Định dạng cho phần hover liên kết */
+a.text-decoration-none:hover {
+  text-decoration: underline !important;
+}
+
+/* Định dạng ảnh carousel */
+.carousel .slide img {
+  object-fit: cover;
+  height: 500px;
+}
+
+/* Media queries cho responsive */
+@media (max-width: 768px) {
+  .carousel .slide img {
+    height: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  .carousel .slide img {
+    height: 200px;
+  }
 }
