@@ -2,7 +2,6 @@ import React from "react";
 import "../assets/style/About.css";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { width } from "@fortawesome/free-solid-svg-icons/fa0";
 
 function About() {
   return (
