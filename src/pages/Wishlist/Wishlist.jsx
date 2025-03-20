@@ -12,19 +12,61 @@ export function Wishlist() {
   const [recommendations, setRecommendations] = useState([]);
   const [showAllRecommendations, setShowAllRecommendations] = useState(false);
 
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     const fetchedWishlist = await fetchWishlist();
+  //     const fetchedRecommendations = await fetchRecommendations();
+  //     setWishlist(fetchedWishlist.slice(0, 4));
+  //     setRecommendations(fetchedRecommendations.slice(0, 4));
+  //   }
+  //   fetchData();
+  // }, []);
+
   useEffect(() => {
-    async function fetchData() {
-      const fetchedWishlist = await fetchWishlist();
-      const fetchedRecommendations = await fetchRecommendations();
-      setWishlist(fetchedWishlist.slice(0, 4));
-      setRecommendations(fetchedRecommendations.slice(0, 4));
-    }
-    fetchData();
+    const fetchWishlist = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch("http://localhost:5000/api/users/wishlist", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data = await response.json();
+            setWishlist(data);
+        } catch (error) {
+            console.error("Lỗi khi lấy wishlist:", error);
+        }
+    };
+
+    fetchWishlist();
   }, []);
 
-  const removeFromWishlist = (id) => {
+const removeFromWishlist = async (id) => {
+  try {
+    const response = await fetch(`http://localhost:5000/api/users/wishlist/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const text = await response.text(); // Lấy dữ liệu trả về dưới dạng text
+    console.log("Response Text:", text); // Kiểm tra dữ liệu trả về
+
+    const data = JSON.parse(text); // Chuyển thành JSON
+    if (!response.ok) {
+      throw new Error(data.message || "Lỗi khi xoá sản phẩm khỏi wishlist");
+    }
+
     setWishlist((prev) => prev.filter((item) => item.id !== id));
-  };
+  } catch (error) {
+    console.error("Lỗi xoá wishlist:", error);
+    alert(error.message);
+  }
+};
+
+
 
   const moveAllToBag = () => {
     wishlist.forEach((item) => addToCart(item));
@@ -72,7 +114,7 @@ export function Wishlist() {
                 </Button>
                 <Card.Img
                   variant='top'
-                  src={item.image}
+                  src={item.image[0]}
                   className='img-fluid'
                   style={{ maxHeight: '200px', objectFit: 'contain' }}
                 />
