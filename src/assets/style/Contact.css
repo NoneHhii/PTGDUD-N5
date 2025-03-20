@@ -1,0 +1,38 @@
+/* Contact.css */
+
+/* Button hover effect */
+.btn-danger:hover {
+  background-color: #db2c2c !important;
+}
+
+/* Form focus effects */
+.form-control:focus {
+  border-color: #db4444;
+  box-shadow: 0 0 0 0.25rem rgba(219, 68, 68, 0.25);
+}
+
+/* Card hover effects */
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Links styling */
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .col-lg-4 .card-body {
+    padding: 1rem;
+  }
+}

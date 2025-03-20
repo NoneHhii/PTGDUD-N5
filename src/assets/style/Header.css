@@ -1,0 +1,40 @@
+.user-container {
+  position: relative;
+  display: inline-block;
+}
+
+.icon-user-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 120px;
+  z-index: 1000;
+  text-align: center;
+  padding: 5px 0;
+}
+
+.dropdown-item {
+  background: none;
+  border: none;
+  color: #333;
+  padding: 10px;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
