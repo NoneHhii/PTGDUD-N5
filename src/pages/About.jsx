@@ -20,7 +20,7 @@ function About() {
               className="breadcrumb-item active text-dark"
               aria-current="page"
             >
-              Contact
+              About
             </li>
           </ol>
         </nav>
