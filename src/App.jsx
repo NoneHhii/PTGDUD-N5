@@ -20,7 +20,7 @@ import { Cart } from './pages/Cart/Cart';
 import { CartProvider } from './pages/Cart/CartContext';
 
 function App() {
-  // const [customers, setcustomers] = useState([]);
+  const [user, setUser] = useState(null);
 
   // useEffect(() => {
   //   axios.get("http://localhost:5000/customers").then((res) => {
@@ -28,16 +28,26 @@ function App() {
   //   });
   // }, []);
 
+  useEffect(() => {
+    console.log("useEffect is running...");
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    console.log("Stored User:", storedUser);
+    if (storedUser) {
+        setUser(storedUser); // Lưu thông tin người dùng vào state
+    }
+  }, []);
+
   return (
     <CartProvider>
       <Router>
         <div className="app-container">
-          <Header />
+          <Header user={user}/>
           <div className="main-content">
             <Routes>
               <Route path="/" element={<HomePage/>} />
               <Route path="/contact" element={<Contact/>} />
               <Route path="/about" element={<About/>} />
+              <Route path="/account" element={<Account user={user}/>} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<div className="page-content">Trang quên mật khẩu</div>} />

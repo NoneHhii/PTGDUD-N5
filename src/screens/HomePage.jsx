@@ -26,6 +26,8 @@ import GamePad from "../assets/image/Category-GamePad.png"
 import GamePadWhite from "../assets/image/Category-GamePad White.png"
 
 import StarRating from "../Components/StarRating";
+import axios from "axios";
+import { useCart } from "../pages/Cart/CartContext";
 
 const products = [
     {
@@ -177,18 +179,78 @@ const categories = [
 
 const HomePage = () => {
 
+    const [Products, setProducts] = useState([]);
+
     const sliderRef = useRef({});
     const sliderRef2 = useRef({});
     const [srcFavor, setSrcFavor] = useState({});
     const [sltCategory, setSltCategory] = useState();
+    const {addToCart} = useCart();  
+
+    //get products
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await axios.get("http://localhost:5000/api/products/get-products");
+                setProducts(res.data);
+            } catch (error) {
+                console.error("Lỗi khi lấy sản phẩm: ", error);
+            }
+        }
+
+        fetchData();
+    }, []);
 
     //change src when click
     const handleSrc = (id) => {
-        setSrcFavor((srcPrev) => ({
+        setSrcFavor((srcPrev) => {
+            const updatedFavor = {
                 ...srcPrev,
                 [id]: !srcPrev[id],
-            }))
+            };
+            return updatedFavor;
+        });
+    
+        // Chờ state cập nhật rồi mới gọi API
+        setTimeout(() => {
+            updateWishlist(id, !srcFavor[id]);
+        }, 0);
     };
+    
+
+    const updateWishlist = async (productId, isFavored) => {
+        try {
+
+            const token = localStorage.getItem("token"); // Hoặc context nếu bạn lưu token ở đó
+
+            if (!token) {
+                console.error("Token không tồn tại!"); // Thông báo nếu không tìm thấy token
+                return;
+            }
+
+            console.log(token);
+            console.log(isFavored);
+
+            const response = await axios.post(
+                "http://localhost:5000/api/users/update-wishlist", 
+                {
+                    productId,
+                    isFavored,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Gửi token trong header Authorization
+                    },
+                }
+            );
+            
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error update", error);
+        }
+    };
+
+
 
     //setting for slicker
     const settings = {
@@ -275,8 +337,8 @@ const HomePage = () => {
       }, []);
 
     return (
-        <div className="container-fluid contain">
-            <div>
+        <div className="container-fluid contain mb-4 mt-4">
+            <div className="d-flex justify-content-center">
                 <Carousel className="carousel">
                     <Carousel.Item>
                         <img src={banner1} alt="" className="carousel-img"/>
@@ -341,11 +403,11 @@ const HomePage = () => {
                         </Button>
                     </div>
                 </div>
-                <div className="position-relative">
+                <div className="position-relative mt-3">
                     <Slider ref={sliderRef} {...settings}>
-                        {products.map((product) => (
+                        {Products.filter(product => product.sale > 0).map((product) => (
                             <div key={product.id}>
-                                <div className="border rounded text-center" style={{maxWidth: "270px", maxHeight: "350px"}}>
+                                <div className="border rounded text-center card-hover" style={{maxWidth: "270px", maxHeight: "350px"}}>
                                     <div className="position-relative" style={{backgroundColor: "#f4f4f4", minWidth: "100%"}}>
                                         <span 
                                             className="badge bg-danger position-absolute" 
@@ -360,12 +422,25 @@ const HomePage = () => {
                                             style={{top: "10px", right: "10px"}} 
                                             onClick={() => handleSrc(product.id)}
                                         />
-                                        <img src={product.img} alt="" className="img-fluid mx-auto"/>
+                                        <img 
+                                            src={product.image[0]} 
+                                            alt="" 
+                                            className="img-fluid mx-auto"
+                                            style={{maxHeight: "180px"}}
+                                        />
+                                        <Button
+                                            variant='dark'
+                                            className='w-100 add-to-cart '
+                                            style={{borderRadius: "0px"}}
+                                            onClick={() => addToCart(product)}
+                                        >
+                                            Add To Cart
+                                        </Button>
                                     </div>
                                     <div className="p-3">
                                         <h6 className="mt-2 text-start">{product.name}</h6>
                                         <div className="d-flex">
-                                            <p className="me-3 text-danger">${product.price*(1 - product.sale/100)}</p>
+                                            <p className="me-3 text-danger">${ (product.price * (1 - product.sale / 100)).toFixed(2) }</p>
                                             <p className="text-muted text-decoration-line-through">${product.price}</p>
                                         </div>
                                         <div>
@@ -407,42 +482,51 @@ const HomePage = () => {
                     </div>
                 </div>
                 <div className="position-relative">
-                    <div className="d-flex justify-content-between">
-                        {products.map((product) => {
-                            if(product.id <= 6) {
+                    <div className="row">
+                        {Products.map((product) => {
+                            if (product.id <= 6) {
                                 return (
-                                    <div key={product.id}>
-                                        <div className="border rounded text-center product" style={{maxWidth: "270px", maxHeight: "350px"}}>
-                                            <div className="position-relative" style={{backgroundColor: "#f4f4f4", minWidth: "100%"}}>
-                                                {/* <span 
-                                                    className="badge bg-danger position-absolute" 
-                                                    style={{top: "10px", left: "10px"}}
-                                                >
-                                                    -{product.sale}
-                                                </span> */}
+                                    <div key={product.id} className="col-lg-2 col-md-4 col-sm-6">
+                                        <div 
+                                            className="border rounded text-center product card-hover" 
+                                            style={{ maxWidth: "270px", maxHeight: "350px" }}
+                                        >
+                                            <div 
+                                                className="position-relative d-flex justify-content-center align-items-center" 
+                                                style={{ backgroundColor: "#f4f4f4", minWidth: "100%", height: "180px" }}
+                                            >
+                                                <img 
+                                                    src={product.image[0]} 
+                                                    alt={product.name} 
+                                                    className="img-fluid" 
+                                                    style={{ maxHeight: '100%', objectFit: 'contain' }}
+                                                />
                                                 <img 
                                                     src={srcFavor[product.id] ? favorSlt : favor} 
-                                                    alt="" 
+                                                    alt="favorite" 
                                                     className="position-absolute" 
-                                                    style={{top: "10px", right: "10px"}} 
+                                                    style={{ top: "10px", right: "10px" }} 
                                                     onClick={() => handleSrc(product.id)}
                                                 />
-                                                <img src={product.img} alt="" className="img-fluid mx-auto"/>
                                             </div>
+                                            <Button
+                                                variant='dark'
+                                                className='w-100 add-to-cart'
+                                                style={{ borderRadius: "0px" }}
+                                                onClick={() => addToCart(product)}
+                                            >
+                                                Add To Cart
+                                            </Button>
                                             <div className="p-3">
                                                 <h6 className="mt-2 text-start">{product.name}</h6>
                                                 <div className="d-flex">
-                                                    {/* <p className="me-3 text-danger">${product.price*(1 - product.sale/100)}</p> */}
                                                     <p className="me-3 text-danger">${product.price}</p>
-                                                    {/* <p className="text-muted text-decoration-line-through">${product.price}</p> */}
                                                 </div>
-                                                <div>
-                                                    <StarRating rating={product.rating}/>
-                                                </div>
+                                                <StarRating rating={product.rating} />
                                             </div>
-                                        </div>  
+                                        </div>
                                     </div>
-                                )
+                                );
                             }
                         })}
                     </div>
@@ -552,7 +636,7 @@ const HomePage = () => {
                     <Slider ref={sliderRef2} {...settingsRow}>
                         {products.map((product) => (
                             <div key={product.id}>
-                                <div className="border rounded text-center mt-3 product" style={{maxWidth: "270px", maxHeight: "350px"}}>
+                                <div className="border rounded text-center mt-3 product card-hover" style={{maxWidth: "270px", maxHeight: "350px"}}>
                                     <div className="position-relative" style={{backgroundColor: "#f4f4f4", minWidth: "100%"}}>
                                         {/* <span 
                                             className="badge bg-danger position-absolute" 
@@ -568,6 +652,14 @@ const HomePage = () => {
                                             onClick={() => handleSrc(product.id)}
                                         />
                                         <img src={product.img} alt="" className="img-fluid mx-auto"/>
+                                        <Button
+                                            variant='dark'
+                                            className='w-100 add-to-cart '
+                                            style={{borderRadius: "0px"}}
+                                            onClick={() => addToCart(product)}
+                                        >
+                                            Add To Cart
+                                        </Button>
                                     </div>
                                     <div className="p-3">
                                         <h6 className="mt-2 text-start">{product.name}</h6>
@@ -591,6 +683,19 @@ const HomePage = () => {
                         <Button className="btn-danger mt-3">View All Products</Button>
                     </div>
                 </div>
+            </div>
+            <div className="row text-center mt-5">
+                {[
+                { img: "icon_about_3.png", title: "FREE AND FAST DELIVERY", text: "Free delivery for all orders over $140" },
+                { img: "icon_about_1.png", title: "24/7 CUSTOMER SERVICE", text: "Friendly 24/7 customer support" },
+                { img: "icon_about_2.png", title: "MONEY BACK GUARANTEE", text: "We return money within 30 days" },
+                ].map((item, index) => (
+                <div key={index} className="col-md-4">
+                    <img src={`src/assets/img/${item.img}`} className="mb-3 mx-auto" alt={item.title} width={60} />
+                    <h5 className="fw-bold">{item.title}</h5>
+                    <p>{item.text}</p>
+                </div>
+                ))}
             </div>
         </div>
     )

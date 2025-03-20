@@ -3,5 +3,5 @@
 }
 
 .card_about:hover .card_about_statitic {
-  background-color: white;
+  background-color: red;
 }
