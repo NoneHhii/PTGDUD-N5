@@ -70,11 +70,12 @@ const Header = ({ user, handleLogout }) => {
               onMouseEnter={() => setIsDropdownOpen(true)}
               onMouseLeave={() => setIsDropdownOpen(false)}
             >
-              <Link to="/account" className="icon-link pt-3">
+              <Link to="/account" className="icon-link pt-2">
                 <img
                   src={user.avatar}
                   alt={user.name}
                   className="icon-user-img"
+                  style={{maxWidth: "32px", maxHeight: "32px"}}
                 />
               </Link>
 

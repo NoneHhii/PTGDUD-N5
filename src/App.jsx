@@ -19,6 +19,7 @@ import { Wishlist } from './pages/Wishlist/Wishlist';
 import { Cart } from './pages/Cart/Cart';
 import { CartProvider } from './pages/Cart/CartContext';
 import SearchPage from "./screens/SearchPage";
+import DetailPage from "./pages/DetailPage";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -62,6 +63,7 @@ function App() {
               <Route path='/checkout' element={<Checkout></Checkout>}></Route>
               <Route path='*' element={<h1>404 Not Found</h1>} />
               <Route path="/search" element={<SearchPage/>}/>
+              <Route path="/detail" element={<DetailPage/>}/>
               <Route
                 path="/forgot-password"
                 element={

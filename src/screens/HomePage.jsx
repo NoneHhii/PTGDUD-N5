@@ -28,121 +28,7 @@ import GamePadWhite from "../assets/image/Category-GamePad White.png"
 import StarRating from "../Components/StarRating";
 import axios from "axios";
 import { useCart } from "../pages/Cart/CartContext";
-
-const products = [
-    {
-        id: 1,
-        name: "HAVIT HV-G92 Gamepad",
-        price: 160,
-        sale: 40,
-        rating: 5,
-        img: pd1,
-    },
-    {
-        id: 2,
-        name: "AK-900 Wired Keyboard",
-        price: 1160,
-        sale: 35,
-        rating: 4.2,
-        img: pd2,
-    },
-    {
-        id: 3,
-        name: "IPS LCD Gaming Monitor",
-        price: 400,
-        sale: 30,
-        rating: 4.5,
-        img: pd3,
-    },
-    {
-        id: 4,
-        name: "HAVIT HV-G92 Gamepad",
-        price: 160,
-        sale: 40,
-        rating: 5,
-        img: pd1,
-    },
-    {
-        id: 5,
-        name: "HAVIT HV-G92 Gamepad",
-        price: 160,
-        sale: 40,
-        rating: 5,
-        img: pd1,
-    },
-    {
-        id: 6,
-        name: "HAVIT HV-G92 Gamepad",
-        price: 160,
-        sale: 40,
-        rating: 5,
-        img: pd1,
-    },
-    {
-        id: 7,
-        name: "AK-900 Wired Keyboard",
-        price: 1160,
-        sale: 35,
-        rating: 4.2,
-        img: pd2,
-    },
-    {
-        id: 8,
-        name: "AK-900 Wired Keyboard",
-        price: 1160,
-        sale: 35,
-        rating: 4.2,
-        img: pd2,
-    },
-    {
-        id: 9,
-        name: "AK-900 Wired Keyboard",
-        price: 1160,
-        sale: 35,
-        rating: 4.2,
-        img: pd2,
-    },
-    {
-        id: 10,
-        name: "AK-900 Wired Keyboard",
-        price: 1160,
-        sale: 35,
-        rating: 4.2,
-        img: pd2,
-    },
-    {
-        id: 11,
-        name: "IPS LCD Gaming Monitor",
-        price: 400,
-        sale: 30,
-        rating: 4.5,
-        img: pd3,
-    },
-    {
-        id: 12,
-        name: "IPS LCD Gaming Monitor",
-        price: 400,
-        sale: 30,
-        rating: 4.5,
-        img: pd3,
-    },
-    {
-        id: 13,
-        name: "IPS LCD Gaming Monitor",
-        price: 400,
-        sale: 30,
-        rating: 4.5,
-        img: pd3,
-    },
-    {
-        id: 14,
-        name: "IPS LCD Gaming Monitor",
-        price: 400,
-        sale: 30,
-        rating: 4.5,
-        img: pd3,
-    }
-]
+import { useNavigate } from "react-router-dom";
 
 const categories = [
     {
@@ -186,6 +72,7 @@ const HomePage = () => {
     const [srcFavor, setSrcFavor] = useState({});
     const [sltCategory, setSltCategory] = useState();
     const {addToCart} = useCart();  
+    const navigate = useNavigate();
 
     //get products
     useEffect(() => {
@@ -406,8 +293,8 @@ const HomePage = () => {
                 <div className="position-relative mt-3">
                     <Slider ref={sliderRef} {...settings}>
                         {Products.filter(product => product.sale > 0).map((product) => (
-                            <div key={product.id}>
-                                <div className="border rounded text-center card-hover" style={{maxWidth: "270px", maxHeight: "350px"}}>
+                            <div key={product.id}  >
+                                <div className="border rounded text-center card-hover" style={{maxWidth: "270px", maxHeight: "350px"}} >
                                     <div className="position-relative" style={{backgroundColor: "#f4f4f4", minWidth: "100%"}}>
                                         <span 
                                             className="badge bg-danger position-absolute" 
@@ -437,7 +324,7 @@ const HomePage = () => {
                                             Add To Cart
                                         </Button>
                                     </div>
-                                    <div className="p-3">
+                                    <div className="p-3" onClick={() => navigate('/detail', { state: { product } })}>
                                         <h6 className="mt-2 text-start">{product.name}</h6>
                                         <div className="d-flex">
                                             <p className="me-3 text-danger">${ (product.price * (1 - product.sale / 100)).toFixed(2) }</p>
@@ -636,7 +523,10 @@ const HomePage = () => {
                     <Slider ref={sliderRef2} {...settingsRow}>
                         {Products.map((product) => (
                             <div key={product.id}>
-                                <div className="border rounded text-center mt-3 product card-hover" style={{maxWidth: "270px", maxHeight: "350px"}}>
+                                <div 
+                                    className="border rounded text-center mt-3 product card-hover" 
+                                    style={{maxWidth: "270px", maxHeight: "350px"}}
+                                >
                                     <div className="position-relative" style={{backgroundColor: "#f4f4f4", minWidth: "100%"}}>
                                         {/* <span 
                                             className="badge bg-danger position-absolute" 
