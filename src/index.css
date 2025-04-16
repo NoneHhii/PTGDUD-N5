@@ -1,1 +1,552 @@
 @import "tailwindcss";
+
+/* :root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+>>>>>>> a9642bd9e8d5af877008fb204381c8391c0ef4f0
+
+/* Đảm bảo toàn bộ trang chiếm ít nhất 100% chiều cao màn hình */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Thiết lập container chính điền đầy không gian */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* Lớp chứa nội dung chính */
+.main-content {
+  flex: 1;  /* Phần này sẽ chiếm hết khoảng trống giữa Header và Footer */
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+.header {
+    width: 100%;
+}
+
+/* Top Bar */
+.top-bar {
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 5px 10px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-bar a {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.language-selector {
+    cursor: pointer;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 50px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Logo */
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.logo-link {
+  text-decoration: none;
+  color: black;
+}
+
+/* Navigation Links */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li {
+    cursor: pointer;
+    font-size: 16px;  
+}
+
+.nav-links a {
+  text-decoration: none; /* Bỏ gạch chân */
+  border-bottom: none; /* Bỏ đường kẻ dưới nếu có */
+  color: black; /* Chỉnh màu nếu cần */
+}
+
+.nav-links .active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.search-bar input {
+    border: none;
+    padding: 5px 10px;
+    outline: none;
+    width: 300px;
+}
+
+.search-bar button {
+    background: none;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+/* Icons */
+.icons {
+    display: flex;
+    gap: 15px;
+}
+
+.icon {
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Footer */
+.footer {
+    background-color: #000;
+    color: white;
+    padding: 40px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Footer container */
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Footer column */
+.footer-column {
+    flex: 1;
+    max-width: 200px;
+}
+
+.footer-column h3 {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.footer-column h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.footer-column p {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-column ul li {
+    font-size: 14px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.footer-column ul li:hover {
+    text-decoration: underline;
+}
+
+/* Subscribe box */
+.subscribe-title {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.subscribe-box {
+    display: flex;
+    margin-top: 10px;
+    border: 1px solid white;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.subscribe-box input {
+    flex: 1;
+    border: none;
+    padding: 8px;
+    background: none;
+    color: white;
+    outline: none;
+}
+
+.subscribe-box input::placeholder {
+    color: #ccc;
+}
+
+.subscribe-box button {
+    border: none;
+    background: white;
+    color: black;
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+/* App icons */
+.app-icons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.qr-code {
+    width: 60px;
+}
+
+.app-buttons img {
+    width: 100px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Social icons */
+.social-icons {
+    margin-top: 10px;
+    display: flex;
+    gap: 15px;
+    font-size: 18px;
+}
+
+.social-icons svg {
+    cursor: pointer;
+}
+
+.social-icons svg:hover {
+    color: gray;
+}
+
+/* Footer bottom */
+.footer-bottom {
+    text-align: center;
+    font-size: 14px;
+    padding-top: 10px;
+    border-top: 1px solid #333;
+}
+
+/* Signup Page Styles */
+.signup-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #fff;
+  }
+  
+  .signup-image {
+    flex: 1;
+    background-color: #E0F2F1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .signup-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .signup-form {
+    flex: 1;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .signup-title {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #000;
+  }
+  
+  .signup-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 14px 0;
+    border: none;
+    border-bottom: 1px solid #CCCCCC;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  
+  .form-input:focus {
+    border-bottom: 1px solid #DB4444;
+  }
+  
+  .create-account-btn {
+    width: 100%;
+    background-color: #DB4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin: 10px 0 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .create-account-btn:hover {
+    background-color: #c53030;
+  }
+  
+  .google-signup-btn {
+    width: 100%;
+    background-color: white;
+    color: #000;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    padding: 14px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .google-signup-btn:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .google-icon {
+    font-size: 20px;
+    color: #DB4444;
+  }
+  
+  .login-link {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .login-link a {
+    color: #DB4444;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .signup-container {
+      flex-direction: column;
+    }
+    
+    .signup-image {
+      height: 250px;
+    }
+    
+    .signup-form {
+      padding: 40px 20px;
+    }
+  }
+
+  /* Login Page Styles */
+.login-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #fff;
+  }
+  
+  .login-image {
+    flex: 1;
+    background-color: #E0F2F1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .login-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .login-form {
+    flex: 1;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .login-title {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #000;
+  }
+  
+  .login-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 14px 0;
+    border: none;
+    border-bottom: 1px solid #CCCCCC;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  
+  .form-input:focus {
+    border-bottom: 1px solid #DB4444;
+  }
+  
+  .login-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+  }
+  
+  .login-btn {
+    background-color: #DB4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 28px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .login-btn:hover {
+    background-color: #c53030;
+  }
+  
+  .forgot-password {
+    color: #DB4444;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .forgot-password:hover {
+    text-decoration: underline;
+  }
+  
+  .signup-link {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+    margin-top: 20px;
+  }
+  
+  .signup-link a {
+    color: #DB4444;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .signup-link a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .login-container {
+      flex-direction: column;
+    }
+    
+    .login-image {
+      height: 250px;
+    }
+    
+    .login-form {
+      padding: 40px 20px;
+    }
+    
+    .login-actions {
+      flex-direction: column;
+      gap: 15px;
+      align-items: flex-start;
+    }
+  }
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
