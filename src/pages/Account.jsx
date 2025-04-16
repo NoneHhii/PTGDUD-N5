@@ -1,9 +1,17 @@
+<<<<<<< HEAD
+=======
+import axios from "axios";
+>>>>>>> TKhoa
 import React, { useState, useEffect } from "react";
 
 function Account({ user }) {
   const [formData, setFormData] = useState({
+<<<<<<< HEAD
     firstName: "",
     lastName: "Huy",
+=======
+    name: "",
+>>>>>>> TKhoa
     email: "",
     address: "",
     password: "",
@@ -17,7 +25,11 @@ function Account({ user }) {
     if (user) {
       setFormData((prev) => ({
         ...prev,
+<<<<<<< HEAD
         firstName: user.name || "",
+=======
+        name: user.name || "",
+>>>>>>> TKhoa
         email: user.email || "",
         address: user.address || "",
       }));
@@ -31,10 +43,14 @@ function Account({ user }) {
     const addressRegex = /[\w\s,-]+/;
     const passwordRegex = /^.{6,}$/;
 
+<<<<<<< HEAD
     if (!nameRegex.test(formData.firstName))
       tempErrors.firstName = "Invalid first name";
     if (!nameRegex.test(formData.lastName))
       tempErrors.lastName = "Invalid last name";
+=======
+    if (!nameRegex.test(formData.name)) tempErrors.name = "Invalid first name";
+>>>>>>> TKhoa
     if (!emailRegex.test(formData.email))
       tempErrors.email = "Invalid email format";
     if (!addressRegex.test(formData.address))
@@ -50,6 +66,7 @@ function Account({ user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+<<<<<<< HEAD
     if (validate()) {
       try {
         const response = await fetch(
@@ -80,11 +97,36 @@ function Account({ user }) {
         }
       } catch (error) {
         alert("Failed to update password. Please try again.");
+=======
+
+    const token = localStorage.getItem("token");
+    if (validate()) {
+      try {
+        const response = await axios.put(
+          "http://localhost:5000/api/users/update-password",
+          {
+            currentPassword: formData.password,
+            newPassword: formData.newPassword,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        alert(response.data.message);
+      } catch (error) {
+        console.log("Failed to update user. Please try again.", error);
+        alert(error.response?.data?.message || "Có lỗi xảy ra!");
+>>>>>>> TKhoa
       }
     }
   };
 
   return (
+<<<<<<< HEAD
     <div className="md:container md:mx-auto mt-15 h-200">
       <div className="flex justify-between">
         <div>
@@ -119,11 +161,63 @@ function Account({ user }) {
                   </li>
                   <li>
                     <a href="#" className="text-gray-500">
+=======
+    <div
+      className="container container-md mx-auto mt-5"
+      style={{ marginTop: "3.75rem" }}
+    >
+      <nav aria-label="breadcrumb">
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <a href="/" className="text-secondary text-decoration-none">
+              Home
+            </a>
+          </li>
+          <li className="breadcrumb-item active text-dark" aria-current="page">
+            Account
+          </li>
+        </ol>
+      </nav>
+
+      <div className="mt-5" style={{ marginTop: "5rem", height: "42.5rem" }}>
+        <div className="d-flex" style={{ height: "32.5rem" }}>
+          <div style={{ width: "40%", height: "25rem" }}>
+            <div className="">
+              <ul className="mt-1 text-left" style={{ fontSize: "15px" }}>
+                <p style={{ marginBottom: "10px" }} className="fw-bold">
+                  Manage My Account
+                </p>
+                <div className="pb-3">
+                  <li style={{ color: "#DB4444", listStyleType: "none" }}>
+                    <a
+                      href="#"
+                      style={{ color: "#DB4444", textDecoration: "none" }}
+                    >
+                      My Profile
+                    </a>
+                  </li>
+                  <li style={{ listStyleType: "none" }}>
+                    <a
+                      href="#"
+                      className="text-secondary"
+                      style={{ textDecoration: "none" }}
+                    >
+                      Address Book
+                    </a>
+                  </li>
+                  <li style={{ listStyleType: "none" }}>
+                    <a
+                      href="#"
+                      className="text-secondary"
+                      style={{ textDecoration: "none" }}
+                    >
+>>>>>>> TKhoa
                       My Payment Options
                     </a>
                   </li>
                 </div>
               </ul>
+<<<<<<< HEAD
             </div>
           </div>
 
@@ -139,6 +233,50 @@ function Account({ user }) {
                 {Object.entries(formData).map(([key, value]) => (
                   <div key={key}>
                     <label className="block mb-2 text-sm font-medium text-black">
+=======
+              <ul style={{ fontSize: "15px" }} className="text-left">
+                <p style={{ marginBottom: "10px" }} className="fw-bold">
+                  My Orders
+                </p>
+                <div className="">
+                  <li style={{ color: "#DB4444", listStyleType: "none" }}>
+                    <a href="#" className="text-secondary">
+                      My Returns
+                    </a>
+                  </li>
+                  <li style={{ listStyleType: "none" }}>
+                    <a
+                      href="#"
+                      className="text-secondary"
+                      style={{ textDecoration: "none" }}
+                    >
+                      My Cancellations
+                    </a>
+                  </li>
+                  <li style={{ listStyleType: "none" }}>
+                    <a
+                      href="#"
+                      className="text-secondary"
+                      style={{ textDecoration: "none" }}
+                    >
+                      My WishList
+                    </a>
+                  </li>
+                </div>
+              </ul>
+            </div>
+          </div>
+
+          <div className="shadow" style={{ width: "60%", height: "35rem" }}>
+            <div className="p-5">
+              <span className="fw-bold fs-4" style={{ color: "#DB4444" }}>
+                Edit Your Profile
+              </span>
+              <form className="row row-cols-2 g-4" onSubmit={handleSubmit}>
+                {Object.entries(formData).map(([key, value]) => (
+                  <div key={key} className="col">
+                    <label className=" text-left fw-bold form-label d-block mb-2 fs-6 fw-medium">
+>>>>>>> TKhoa
                       {key.replace(/([A-Z])/g, " $1").toUpperCase()}
                     </label>
                     <input
@@ -149,20 +287,41 @@ function Account({ user }) {
                           ? "password"
                           : "text"
                       }
+<<<<<<< HEAD
+=======
+                      style={{ height: "50px" }}
+>>>>>>> TKhoa
                       value={value}
                       onChange={(e) =>
                         setFormData({ ...formData, [key]: e.target.value })
                       }
+<<<<<<< HEAD
                       className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                     />
                     {errors[key] && (
                       <p className="text-red-500 text-xs">{errors[key]}</p>
+=======
+                      className="form-control bg-light border border-light-subtle rounded-3 fs-6 w-100 p-2"
+                    />
+                    {errors[key] && (
+                      <p
+                        className="text-danger fs-6"
+                        style={{ fontSize: "0.75rem" }}
+                      >
+                        {errors[key]}
+                      </p>
+>>>>>>> TKhoa
                     )}
                   </div>
                 ))}
                 <button
                   type="submit"
+<<<<<<< HEAD
                   className="col-span-2 text-white bg-[#DB4444] hover:bg-[#db2c2c] font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center"
+=======
+                  className="col-12 btn text-white rounded-3 fs-6 w-100 p-2 mt-5"
+                  style={{ backgroundColor: "#DB4444", marginTop: "0.5rem" }}
+>>>>>>> TKhoa
                 >
                   Save Changes
                 </button>
