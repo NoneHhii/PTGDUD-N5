@@ -1,11 +1,19 @@
 import { FaSearch, FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import "../assets/style/Header.css";
 
 const Header = ({ user, handleLogout }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const location = useLocation();
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const location = useLocation();
+    const [query, setQuery] = useState();
+    const navigate = useNavigate();
+
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter" && query.trim() !== "") {
+            navigate("/search", { state: { searchKey: query } });
+        }
+    };
 
   return (
     <header className="header">
@@ -40,10 +48,13 @@ const Header = ({ user, handleLogout }) => {
 
         {/* Search Bar */}
         <div className="search-bar">
-          <input type="text" placeholder="What are you looking for?" />
-          <button>
-            <FaSearch />
-          </button>
+            <input 
+                type="text" 
+                placeholder="What are you looking for?" 
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+            />
+            <button><FaSearch /></button>
         </div>
 
         {/* User Icons */}
@@ -59,11 +70,12 @@ const Header = ({ user, handleLogout }) => {
               onMouseEnter={() => setIsDropdownOpen(true)}
               onMouseLeave={() => setIsDropdownOpen(false)}
             >
-              <Link to="/account" className="icon-link pt-3">
+              <Link to="/account" className="icon-link pt-2">
                 <img
                   src={user.avatar}
                   alt={user.name}
                   className="icon-user-img"
+                  style={{maxWidth: "32px", maxHeight: "32px"}}
                 />
               </Link>
 

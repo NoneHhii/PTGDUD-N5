@@ -46,7 +46,7 @@ export function Cart() {
                     <tr key={item.id}>
                       <td className='text-start ps-5'>
                         <img
-                          src={item.image}
+                          src={item.image[0]}
                           alt={item.name}
                           height='50'
                           width={50}

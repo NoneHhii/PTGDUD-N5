@@ -28,121 +28,7 @@ import GamePadWhite from "../assets/image/Category-GamePad White.png";
 import StarRating from "../Components/StarRating";
 import axios from "axios";
 import { useCart } from "../pages/Cart/CartContext";
-
-const products = [
-  {
-    id: 1,
-    name: "HAVIT HV-G92 Gamepad",
-    price: 160,
-    sale: 40,
-    rating: 5,
-    img: pd1,
-  },
-  {
-    id: 2,
-    name: "AK-900 Wired Keyboard",
-    price: 1160,
-    sale: 35,
-    rating: 4.2,
-    img: pd2,
-  },
-  {
-    id: 3,
-    name: "IPS LCD Gaming Monitor",
-    price: 400,
-    sale: 30,
-    rating: 4.5,
-    img: pd3,
-  },
-  {
-    id: 4,
-    name: "HAVIT HV-G92 Gamepad",
-    price: 160,
-    sale: 40,
-    rating: 5,
-    img: pd1,
-  },
-  {
-    id: 5,
-    name: "HAVIT HV-G92 Gamepad",
-    price: 160,
-    sale: 40,
-    rating: 5,
-    img: pd1,
-  },
-  {
-    id: 6,
-    name: "HAVIT HV-G92 Gamepad",
-    price: 160,
-    sale: 40,
-    rating: 5,
-    img: pd1,
-  },
-  {
-    id: 7,
-    name: "AK-900 Wired Keyboard",
-    price: 1160,
-    sale: 35,
-    rating: 4.2,
-    img: pd2,
-  },
-  {
-    id: 8,
-    name: "AK-900 Wired Keyboard",
-    price: 1160,
-    sale: 35,
-    rating: 4.2,
-    img: pd2,
-  },
-  {
-    id: 9,
-    name: "AK-900 Wired Keyboard",
-    price: 1160,
-    sale: 35,
-    rating: 4.2,
-    img: pd2,
-  },
-  {
-    id: 10,
-    name: "AK-900 Wired Keyboard",
-    price: 1160,
-    sale: 35,
-    rating: 4.2,
-    img: pd2,
-  },
-  {
-    id: 11,
-    name: "IPS LCD Gaming Monitor",
-    price: 400,
-    sale: 30,
-    rating: 4.5,
-    img: pd3,
-  },
-  {
-    id: 12,
-    name: "IPS LCD Gaming Monitor",
-    price: 400,
-    sale: 30,
-    rating: 4.5,
-    img: pd3,
-  },
-  {
-    id: 13,
-    name: "IPS LCD Gaming Monitor",
-    price: 400,
-    sale: 30,
-    rating: 4.5,
-    img: pd3,
-  },
-  {
-    id: 14,
-    name: "IPS LCD Gaming Monitor",
-    price: 400,
-    sale: 30,
-    rating: 4.5,
-    img: pd3,
-  },
-];
+import { useNavigate } from "react-router-dom";
 
 const categories = [
   {
@@ -186,17 +72,41 @@ const HomePage = () => {
   const [sltCategory, setSltCategory] = useState();
   const { addToCart } = useCart();
 
-  //get products
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(
-          "http://localhost:5000/api/products/get-products"
-        );
-        setProducts(res.data);
-      } catch (error) {
-        console.error("Lỗi khi lấy sản phẩm: ", error);
-      }
+    const sliderRef = useRef({});
+    const sliderRef2 = useRef({});
+    const [srcFavor, setSrcFavor] = useState({});
+    const [sltCategory, setSltCategory] = useState();
+    const {addToCart} = useCart();  
+    const navigate = useNavigate();
+
+    //get products
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await axios.get("http://localhost:5000/api/products/get-products");
+                setProducts(res.data);
+            } catch (error) {
+                console.error("Lỗi khi lấy sản phẩm: ", error);
+            }
+        }
+
+        fetchData();
+    }, []);
+
+    //change src when click
+    const handleSrc = (id) => {
+        setSrcFavor((srcPrev) => {
+            const updatedFavor = {
+                ...srcPrev,
+                [id]: !srcPrev[id],
+            };
+            return updatedFavor;
+        });
+    
+        // Chờ state cập nhật rồi mới gọi API
+        setTimeout(() => {
+            updateWishlist(id, !srcFavor[id]);
+        }, 0);
     };
 
     fetchData();
@@ -449,6 +359,97 @@ const HomePage = () => {
                         ${product.price}
                       </p>
                     </div>
+
+                    <div className="d-flex align-items-center justify-content-center text-center">
+                        <p className="text-danger my-auto ms-3 fw-bold w-100">Today's</p>
+                    </div>
+                </div>
+                <div className="d-flex justify-content-between">
+                    <div className="d-flex align-items-center">
+                        <h3 className="my-auto me-5">Flash Sales</h3>
+                        <div className="d-flex justify-content-center align-items-center">
+                            {["Days", "Hours", "Minutes", "Seconds"].map((label, index) => (
+                                <div key={index} className="text-center mx-3">
+                                <div className="fw-bold">{String(Object.values(timeLeft)[index]).padStart(2, "0")}</div>
+                                <div className="text-muted">{label}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="flex-end">
+                        <Button 
+                            className="border-0" 
+                            style={{backgroundColor: "transparent"}}
+                            onClick={() => {
+                                if (sliderRef.current) {
+                                    sliderRef.current.slickPrev();
+                                }
+                            }}
+                            disabled={!sliderRef.current}
+                        >
+                            <img src={LeftArrow} alt="" />
+                        </Button>
+                        <Button 
+                            className="border-0" 
+                            style={{backgroundColor: "transparent"}}
+                            onClick={() => {
+                                if (sliderRef.current) {
+                                    sliderRef.current.slickNext();
+                                }
+                            }}
+                        >
+                            <img src={RightArrow} alt="" />
+                        </Button>
+                    </div>
+                </div>
+                <div className="position-relative mt-3">
+                    <Slider ref={sliderRef} {...settings}>
+                        {Products.filter(product => product.sale > 0).map((product) => (
+                            <div key={product.id}  >
+                                <div className="border rounded text-center card-hover" style={{maxWidth: "270px", maxHeight: "350px"}} >
+                                    <div className="position-relative" style={{backgroundColor: "#f4f4f4", minWidth: "100%"}}>
+                                        <span 
+                                            className="badge bg-danger position-absolute" 
+                                            style={{top: "10px", left: "10px"}}
+                                        >
+                                            -{product.sale}
+                                        </span>
+                                        <img 
+                                            src={srcFavor[product.id] ? favorSlt : favor} 
+                                            alt="" 
+                                            className="position-absolute" 
+                                            style={{top: "10px", right: "10px"}} 
+                                            onClick={() => handleSrc(product.id)}
+                                        />
+                                        <img 
+                                            src={product.image[0]} 
+                                            alt="" 
+                                            className="img-fluid mx-auto"
+                                            style={{maxHeight: "180px"}}
+                                        />
+                                        <Button
+                                            variant='dark'
+                                            className='w-100 add-to-cart '
+                                            style={{borderRadius: "0px"}}
+                                            onClick={() => addToCart(product)}
+                                        >
+                                            Add To Cart
+                                        </Button>
+                                    </div>
+                                    <div className="p-3" onClick={() => navigate('/detail', { state: { product } })}>
+                                        <h6 className="mt-2 text-start">{product.name}</h6>
+                                        <div className="d-flex">
+                                            <p className="me-3 text-danger">${ (product.price * (1 - product.sale / 100)).toFixed(2) }</p>
+                                            <p className="text-muted text-decoration-line-through">${product.price}</p>
+                                        </div>
+                                        <div>
+                                            <StarRating rating={product.rating}/>
+                                        </div>
+                                    </div>
+                                </div>  
+                            </div>
+                        ))}
+                    </Slider>
                     <div>
                       <StarRating rating={product.rating} />
                     </div>
@@ -610,85 +611,76 @@ const HomePage = () => {
             }}
           ></div>
 
-          <div className="d-flex align-items-center justify-content-center text-center">
-            <p className="text-danger my-auto ms-3 fw-bold w-100">
-              Our Products
-            </p>
-          </div>
-        </div>
-        <div className="d-flex justify-content-between">
-          <div className="d-flex align-items-center">
-            <h3 className="my-auto me-5">Explore Our Products</h3>
-          </div>
-          <div className="flex-end">
-            <Button
-              className="border-0"
-              style={{ backgroundColor: "transparent" }}
-              onClick={() => {
-                if (sliderRef2.current) {
-                  sliderRef2.current.slickPrev();
-                }
-              }}
-              disabled={!sliderRef2.current}
-            >
-              <img src={LeftArrow} alt="" />
-            </Button>
-            <Button
-              className="border-0"
-              style={{ backgroundColor: "transparent" }}
-              onClick={() => {
-                if (sliderRef2.current) {
-                  sliderRef2.current.slickNext();
-                }
-              }}
-            >
-              <img src={RightArrow} alt="" />
-            </Button>
-          </div>
-        </div>
-        <div className="position-relative">
-          <Slider ref={sliderRef2} {...settingsRow}>
-            {products.map((product) => (
-              <div key={product.id}>
-                <div
-                  className="border rounded text-center mt-3 product card-hover"
-                  style={{ maxWidth: "270px", maxHeight: "350px" }}
-                >
-                  <div
-                    className="position-relative"
-                    style={{ backgroundColor: "#f4f4f4", minWidth: "100%" }}
-                  >
-                    {/* <span 
+                    <div className="d-flex align-items-center justify-content-center text-center">
+                        <p className="text-danger my-auto ms-3 fw-bold w-100">Our Products</p>
+                    </div>
+                </div>
+                <div className="d-flex justify-content-between">
+                    <div className="d-flex align-items-center">
+                        <h3 className="my-auto me-5">Explore Our Products</h3>
+                    </div>
+                    <div className="flex-end">
+                        <Button 
+                            className="border-0" 
+                            style={{backgroundColor: "transparent"}}
+                            onClick={() => {
+                                if (sliderRef2.current) {
+                                    sliderRef2.current.slickPrev();
+                                }
+                            }}
+                            disabled={!sliderRef2.current}
+                        >
+                            <img src={LeftArrow} alt="" />
+                        </Button>
+                        <Button 
+                            className="border-0" 
+                            style={{backgroundColor: "transparent"}}
+                            onClick={() => {
+                                if (sliderRef2.current) {
+                                    sliderRef2.current.slickNext();
+                                }
+                            }}
+                        >
+                            <img src={RightArrow} alt="" />
+                        </Button>
+                    </div>
+                </div>
+                <div className="position-relative">
+                    <Slider ref={sliderRef2} {...settingsRow}>
+                        {Products.map((product) => (
+                            <div key={product.id}>
+                                <div 
+                                    className="border rounded text-center mt-3 product card-hover" 
+                                    style={{maxWidth: "270px", maxHeight: "350px"}}
+                                >
+                                    <div className="position-relative" style={{backgroundColor: "#f4f4f4", minWidth: "100%"}}>
+                                        {/* <span 
                                             className="badge bg-danger position-absolute" 
                                             style={{top: "10px", left: "10px"}}
                                         >
                                             -{product.sale}
                                         </span> */}
-                    <img
-                      src={srcFavor[product.id] ? favorSlt : favor}
-                      alt=""
-                      className="position-absolute"
-                      style={{ top: "10px", right: "10px" }}
-                      onClick={() => handleSrc(product.id)}
-                    />
-                    <img
-                      src={product.img}
-                      alt=""
-                      className="img-fluid mx-auto"
-                    />
-                    <Button
-                      variant="dark"
-                      className="w-100 add-to-cart "
-                      style={{ borderRadius: "0px" }}
-                      onClick={() => addToCart(product)}
-                    >
-                      Add To Cart
-                    </Button>
-                  </div>
-                  <div className="p-3">
-                    <h6 className="mt-2 text-start">{product.name}</h6>
-                    <div className="d-flex">
-                      {/* <p className="me-3 text-danger">${product.price*(1 - product.sale/100)}</p>
+                                        <img 
+                                            src={srcFavor[product.id] ? favorSlt : favor} 
+                                            alt="" 
+                                            className="position-absolute" 
+                                            style={{top: "10px", right: "10px"}} 
+                                            onClick={() => handleSrc(product.id)}
+                                        />
+                                        <img src={product.image[0]} alt="" className="img-fluid mx-auto" style={{maxHeight: "180px"}}/>
+                                        <Button
+                                            variant='dark'
+                                            className='w-100 add-to-cart '
+                                            style={{borderRadius: "0px"}}
+                                            onClick={() => addToCart(product)}
+                                        >
+                                            Add To Cart
+                                        </Button>
+                                    </div>
+                                    <div className="p-3">
+                                        <h6 className="mt-2 text-start">{product.name}</h6>
+                                        <div className="d-flex">
+                                            {/* <p className="me-3 text-danger">${product.price*(1 - product.sale/100)}</p>
                                             <p className="text-muted text-decoration-line-through">${product.price}</p> */}
                       <p className="me-3 my-auto text-danger">
                         ${product.price}

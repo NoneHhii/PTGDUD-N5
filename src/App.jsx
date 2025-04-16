@@ -14,10 +14,12 @@ import "slick-carousel/slick/slick-theme.css";
 import About from "./pages/About";
 import Account from "./pages/Account";
 import Contact from "./pages/Contact";
-import { Checkout } from "./pages/Checkout/Checkout";
-import { Wishlist } from "./pages/Wishlist/Wishlist";
-import { Cart } from "./pages/Cart/Cart";
-import { CartProvider } from "./pages/Cart/CartContext";
+import { Checkout } from './pages/Checkout/Checkout';
+import { Wishlist } from './pages/Wishlist/Wishlist';
+import { Cart } from './pages/Cart/Cart';
+import { CartProvider } from './pages/Cart/CartContext';
+import SearchPage from "./screens/SearchPage";
+import DetailPage from "./pages/DetailPage";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -56,16 +58,18 @@ function App() {
               <Route path="/account" element={<Account user={user} />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
+              <Route path='/cart' element={<Cart />} />
+              <Route path='/wishlist' element={<Wishlist />} />
+              <Route path='/checkout' element={<Checkout></Checkout>}></Route>
+              <Route path='*' element={<h1>404 Not Found</h1>} />
+              <Route path="/search" element={<SearchPage/>}/>
+              <Route path="/detail" element={<DetailPage/>}/>
               <Route
                 path="/forgot-password"
                 element={
                   <div className="page-content">Trang quên mật khẩu</div>
                 }
               />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/wishlist" element={<Wishlist />} />
-              <Route path="/checkout" element={<Checkout></Checkout>}></Route>
-              <Route path="*" element={<h1>404 Not Found</h1>} />
             </Routes>
           </div>
           <Footer />

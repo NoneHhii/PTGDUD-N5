@@ -31,6 +31,7 @@ const Login = () => {
             localStorage.setItem("user", JSON.stringify(res.data.user));
             localStorage.setItem('token', res.data.token);
             navigate("/");
+            window.location.reload();
         } catch (error) {
             if (error.response) {
                 console.error("Response data:", error.response?.data);
