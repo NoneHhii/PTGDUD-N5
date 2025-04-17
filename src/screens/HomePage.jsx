@@ -350,7 +350,7 @@ const HomePage = () => {
             <img src={banner1} alt="" className="carousel-img" />
           </Carousel.Item>
           <Carousel.Item>
-            <img src={banner1} alt="" className="carousel-img" />
+            <img src={banner2} alt="" className="carousel-img" />
           </Carousel.Item>
         </Carousel>
       </div>
@@ -410,6 +410,7 @@ const HomePage = () => {
             </Button>
           </div>
         </div>
+
         <Container className="position-relative">
           <Slider ref={sliderRef} {...settings}>
             {Products.filter((product) => product.sale > 0).map((product) => (
@@ -536,9 +537,12 @@ const HomePage = () => {
                           onClick={() => handleSrc(product.id)}
                         />
                         <Button
-                          variant="dark"
                           className="w-100 add-to-cart"
-                          style={{ borderRadius: "0px" }}
+                          style={{
+                            borderRadius: "10px",
+                            backgroundColor: "#db4444",
+                            border: "none",
+                          }}
                           onClick={() => addToCart(product)}
                         >
                           Add To Cart
@@ -602,28 +606,23 @@ const HomePage = () => {
                     </div> */}
         </div>
         <div className="position-relative">
-          <div className="d-flex justify-content-between">
+          <div className="container d-flex flex-wrap justify-content-between gap-3">
             {categories.map((category) => {
               const isSelected = sltCategory === category.id;
               return (
                 <div key={category.id}>
                   <div
-                    className="p-5 border rounded"
-                    style={{
-                      maxWidth: "175px",
-                      maxHeight: "145px",
-                      backgroundColor: isSelected ? "red" : "transparent",
-                      color: isSelected ? "white" : "black",
-                      cursor: "pointer",
-                    }}
+                    className={`category-card ${isSelected ? "selected" : ""}`}
                     onClick={() => setSltCategory(category.id)}
                   >
                     <img
                       src={isSelected ? category.img[1] : category.img[0]}
-                      alt=""
-                      className="mx-auto"
+                      alt={category.name}
+                      className="category-image"
                     />
-                    <p className="text-center text-truncate">{category.name}</p>
+                    <p className="text-center text-truncate mt-2 mb-0">
+                      {category.name}
+                    </p>
                   </div>
                 </div>
               );
@@ -680,66 +679,60 @@ const HomePage = () => {
             </Button>
           </div>
         </div>
-        <div className="position-relative">
+        <div className="container position-relative">
           <Slider ref={sliderRef2} {...settingsRow}>
             {Products.map((product) => (
               <div key={product.id}>
-                <div
-                  className="border rounded text-center mt-3 product card-hover"
-                  style={{ maxWidth: "270px", maxHeight: "350px" }}
-                >
-                  <div
-                    className="position-relative"
-                    style={{ backgroundColor: "#f4f4f4", minWidth: "100%" }}
-                  >
-                    {/* <span 
-                                            className="badge bg-danger position-absolute" 
-                                            style={{top: "10px", left: "10px"}}
-                                        >
-                                            -{product.sale}
-                                        </span> */}
+                <div className="product-card">
+                  <div className="product-image-container">
+                    {/* Sale badge */}
+                    {product.sale > 0 && (
+                      <span className="sale-badge">-{product.sale}%</span>
+                    )}
+                    {/* Yêu thích */}
                     <img
                       src={srcFavor[product.id] ? favorSlt : favor}
                       alt=""
-                      className="position-absolute"
-                      style={{ top: "10px", right: "10px" }}
+                      className="favorite-icon"
                       onClick={() => handleSrc(product.id)}
                     />
+                    {/* Ảnh sản phẩm */}
                     <img
                       src={product.image[0]}
                       alt=""
-                      className="img-fluid mx-auto"
-                      style={{ maxHeight: "180px" }}
+                      className="product-image"
                     />
+
+                    {/* Nút Add to Cart */}
                     <Button
-                      variant="dark"
-                      className="w-100 add-to-cart "
-                      style={{ borderRadius: "0px" }}
+                      className="add-to-cart-btn"
                       onClick={() => addToCart(product)}
+                      style={{ backgroundColor: "#db4444", border: "none" }}
                     >
                       Add To Cart
                     </Button>
                   </div>
-                  <div className="p-3">
-                    <h6 className="mt-2 text-start">{product.name}</h6>
-                    <div className="d-flex">
-                      {/* <p className="me-3 text-danger">${product.price*(1 - product.sale/100)}</p>
-                                            <p className="text-muted text-decoration-line-through">${product.price}</p> */}
-                      <p className="me-3 my-auto text-danger">
-                        ${product.price}
+                  <div className="product-info">
+                    <h6 className="product-name">{product.name}</h6>
+                    <div className="product-price-rating">
+                      <p className="price text-danger">
+                        ${product.price * (1 - product.sale / 100)}
                       </p>
-                      <div className="my-auto" style={{ maxWidth: "30px" }}>
-                        <StarRating rating={product.rating} />
-                      </div>
+                      {product.sale > 0 && (
+                        <p className="original-price">${product.price}</p>
+                      )}
                     </div>
-                    <div></div>
+                    <StarRating rating={product.rating} />
                   </div>
                 </div>
               </div>
             ))}
           </Slider>
-          <div>
-            <Button className="btn-danger mt-3">View All Products</Button>
+
+          <div className="text-center">
+            <Button className="btn-danger mt-4 px-4 py-2">
+              View All Products
+            </Button>
           </div>
         </div>
       </div>

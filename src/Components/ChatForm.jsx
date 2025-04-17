@@ -20,7 +20,7 @@ const ChatForm = ({ chatHistory, setChatHistory, generateBotResponse }) => {
       // Add a "Thinking..." placeholder for the bot's response
       setChatHistory((history) => [
         ...history,
-        { role: "model", text: "Thinking..." },
+        { role: "model", text: "Đang suy nghĩ..." },
       ]);
       // Call the function to generate the bot's response
       generateBotResponse([
