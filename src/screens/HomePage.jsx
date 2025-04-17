@@ -82,13 +82,27 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   // chat bot
-  const [chatHistory, setChatHistory] = useState([
-    {
-      hideInChat: true,
-      role: "model",
-      text: companyInfo,
-    },
-  ]);
+  const [chatHistory, setChatHistory] = useState([]);
+  useEffect(() => {
+    const fetchProductInfo = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/products/getAll");
+        const data = await res.json();
+        console.log(data);
+        setChatHistory([
+          {
+            hideInChat: true,
+            role: "model",
+            text: data.description,
+          },
+        ]);
+      } catch (err) {
+        console.error("Lỗi khi lấy dữ liệu sản phẩm:", err);
+      }
+    };
+
+    fetchProductInfo();
+  }, []);
   const [showChatbot, setShowChatbot] = useState([false]);
   const chatBodyRef = useRef();
 
@@ -101,7 +115,12 @@ const HomePage = () => {
       ]);
     };
     // Format chat history for API request
-    history = history.map(({ role, text }) => ({ role, parts: [{ text }] }));
+    history = history
+      .filter(({ text }) => typeof text === "string" && text.trim() !== "")
+      .map(({ role, text }) => ({
+        role,
+        parts: [{ text }],
+      }));
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -287,8 +306,7 @@ const HomePage = () => {
           onClick={() => setShowChatbot((prev) => !prev)}
           id="chatbot-toggler"
         >
-          <span className="material-symbols-rounded">mode_comment</span>
-          <span className="material-symbols-rounded">close</span>
+          <img src="/src/img/close.svg" alt="Close chatbot" />
         </button>
         <div className="chatbot-popup">
           <div className="chat-header">
@@ -425,9 +443,8 @@ const HomePage = () => {
                       style={{ height: "180px", objectFit: "contain" }}
                     />
                     <Button
-                      variant="dark"
                       className="w-100 add-to-cart"
-                      style={{ borderRadius: "0px" }}
+                      style={{ borderRadius: "0px", background: "#db4444" }}
                       onClick={() => addToCart(product)}
                     >
                       Add To Cart
