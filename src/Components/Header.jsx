@@ -4,25 +4,26 @@ import { useState, useEffect } from "react";
 import "../assets/style/Header.css";
 
 const Header = ({ user, handleLogout }) => {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const location = useLocation();
-    const [query, setQuery] = useState();
-    const navigate = useNavigate();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const location = useLocation();
+  const [query, setQuery] = useState();
+  const navigate = useNavigate();
 
-    const handleKeyDown = (e) => {
-        if (e.key === "Enter" && query.trim() !== "") {
-            navigate("/search", { state: { searchKey: query } });
-        }
-    };
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && query.trim() !== "") {
+      navigate("/search", { state: { searchKey: query } });
+    }
+  };
 
   return (
     <header className="header">
-      {/* Top Bar */}
       <div className="top-bar">
-        <p>
-          Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!{" "}
-          <a href="#">ShopNow</a>
-        </p>
+        <div className="scrolling-container" style={{}}>
+          <p className="scrolling-text mt-1">
+            Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!{" "}
+            <a href="#">ShopNow</a>
+          </p>
+        </div>
         <div className="language-selector">English ▼</div>
       </div>
 
@@ -46,15 +47,17 @@ const Header = ({ user, handleLogout }) => {
           </li>
         </ul>
 
-        {/* Search Bar */}
         <div className="search-bar">
-            <input 
-                type="text" 
-                placeholder="What are you looking for?" 
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={handleKeyDown}
-            />
-            <button><FaSearch /></button>
+          <input
+            type="text"
+            placeholder="What are you looking for?"
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="search-input"
+          />
+          <button className="search-button">
+            <FaSearch />
+          </button>
         </div>
 
         {/* User Icons */}
@@ -75,7 +78,7 @@ const Header = ({ user, handleLogout }) => {
                   src={user.avatar}
                   alt={user.name}
                   className="icon-user-img"
-                  style={{maxWidth: "32px", maxHeight: "32px"}}
+                  style={{ maxWidth: "32px", maxHeight: "32px" }}
                 />
               </Link>
 
