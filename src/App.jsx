@@ -14,24 +14,16 @@ import "slick-carousel/slick/slick-theme.css";
 import About from "./pages/About";
 import Account from "./pages/Account";
 import Contact from "./pages/Contact";
-<<<<<<< HEAD
-import NotFound from "./pages/NotFound";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useEffect, useState } from "react";
-=======
 import { Checkout } from './pages/Checkout/Checkout';
 import { Wishlist } from './pages/Wishlist/Wishlist';
 import { Cart } from './pages/Cart/Cart';
 import { CartProvider } from './pages/Cart/CartContext';
 import SearchPage from "./screens/SearchPage";
 import DetailPage from "./pages/DetailPage";
->>>>>>> TKhoa
 
 function App() {
   const [user, setUser] = useState(null);
 
-<<<<<<< HEAD
-=======
   // useEffect(() => {
   //   axios.get("http://localhost:5000/customers").then((res) => {
   //     setcustomers(res.data);
@@ -44,7 +36,6 @@ function App() {
     window.location.href = "/";
   };
 
->>>>>>> TKhoa
   useEffect(() => {
     console.log("useEffect is running...");
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -55,19 +46,6 @@ function App() {
   }, []);
 
   return (
-<<<<<<< HEAD
-    <>
-      <Router>
-        <div className="app-container">
-          <div className="main-content">
-            <Routes>
-              <Route path="/account" element={<Account user={user} />} />
-            </Routes>
-          </div>
-        </div>
-      </Router>
-    </>
-=======
     <CartProvider>
       <Router>
         <div className="app-container">
@@ -98,7 +76,6 @@ function App() {
         </div>
       </Router>
     </CartProvider>
->>>>>>> TKhoa
   );
 }
 

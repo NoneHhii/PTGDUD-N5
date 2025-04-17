@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useRef } from "react";
-import { Button, Card, Carousel, Row } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Carousel,
+  Container,
+  Row,
+  Badge,
+  Col,
+} from "react-bootstrap";
 import Slider from "react-slick";
 
 import banner1 from "../assets/image/banner1.png";
 import banner2 from "../assets/image/banner2.png";
 import LeftArrow from "../assets/image/Fill With Left Arrow.png";
 import RightArrow from "../assets/image/Fill With Right Arrow.png";
-import pd1 from "../assets/image/Frame 611.png";
-import pd2 from "../assets/image/Frame 612.png";
-import pd3 from "../assets/image/Frame 613.png";
 import favor from "../assets/image/TymUnSlt.png";
 import favorSlt from "../assets/image/TymSlt.png";
 import phone from "../assets/image/Category-Cellphone.png";
@@ -29,6 +34,10 @@ import StarRating from "../Components/StarRating";
 import axios from "axios";
 import { useCart } from "../pages/Cart/CartContext";
 import { useNavigate } from "react-router-dom";
+import ChatbotIcon from "../Components/ChatbotIcon";
+import ChatForm from "../Components/ChatForm";
+import ChatMessage from "../Components/ChatMessage";
+import { companyInfo } from "../companyInfo";
 
 const categories = [
   {
@@ -65,13 +74,66 @@ const categories = [
 
 const HomePage = () => {
   const [Products, setProducts] = useState([]);
-
   const sliderRef = useRef({});
   const sliderRef2 = useRef({});
   const [srcFavor, setSrcFavor] = useState({});
   const [sltCategory, setSltCategory] = useState();
   const { addToCart } = useCart();
   const navigate = useNavigate();
+
+  // chat bot
+  const [chatHistory, setChatHistory] = useState([
+    {
+      hideInChat: true,
+      role: "model",
+      text: companyInfo,
+    },
+  ]);
+  const [showChatbot, setShowChatbot] = useState([false]);
+  const chatBodyRef = useRef();
+
+  const generateBotResponse = async (history) => {
+    // Helper function to update chat history
+    const updateHistory = (text, isError = false) => {
+      setChatHistory((prev) => [
+        ...prev.filter((msg) => msg.text != "Thinking..."),
+        { role: "model", text, isError },
+      ]);
+    };
+    // Format chat history for API request
+    history = history.map(({ role, text }) => ({ role, parts: [{ text }] }));
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents: history }),
+    };
+    try {
+      // Make the API call to get the bot's response
+      const response = await fetch(
+        import.meta.env.VITE_API_URL,
+        requestOptions
+      );
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data?.error.message || "Something went wrong!");
+      // Clean and update chat history with bot's response
+      const apiResponseText = data.candidates[0].content.parts[0].text
+        .replace(/\*\*(.*?)\*\*/g, "$1")
+        .trim();
+      updateHistory(apiResponseText);
+    } catch (error) {
+      // Update chat history with the error message
+      updateHistory(error.message, true);
+    }
+  };
+
+  useEffect(() => {
+    // Auto-scroll whenever chat history updates
+    chatBodyRef.current.scrollTo({
+      top: chatBodyRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [chatHistory]);
 
   //get products
   useEffect(() => {
@@ -220,6 +282,50 @@ const HomePage = () => {
 
   return (
     <div className="container-fluid contain mb-4 mt-4">
+      <div className={`container ${showChatbot ? "show-chatbot" : ""}`}>
+        <button
+          onClick={() => setShowChatbot((prev) => !prev)}
+          id="chatbot-toggler"
+        >
+          <span className="material-symbols-rounded">mode_comment</span>
+          <span className="material-symbols-rounded">close</span>
+        </button>
+        <div className="chatbot-popup">
+          <div className="chat-header">
+            <div className="header-info">
+              <ChatbotIcon />
+              <h2 className="logo-text">Chatbot hỗ trợ</h2>
+            </div>
+            <button
+              onClick={() => setShowChatbot((prev) => !prev)}
+              className="material-symbols-outlined"
+            >
+              keyboard_arrow_down
+            </button>
+          </div>
+          {/* chatbot body */}
+          <div ref={chatBodyRef} className="chat-body">
+            <div className="message bot-message">
+              <ChatbotIcon />
+              <p className="message-text">Tui giúp gì được cho bạn?</p>
+            </div>
+
+            {chatHistory.map((chat, index) => (
+              <ChatMessage key={index} chat={chat} />
+            ))}
+          </div>
+
+          {/* Chatbot Footer */}
+          <div className="chat-footer">
+            <ChatForm
+              chatHistory={chatHistory}
+              setChatHistory={setChatHistory}
+              generateBotResponse={generateBotResponse}
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="d-flex justify-content-center">
         <Carousel className="carousel">
           <Carousel.Item>
@@ -241,7 +347,6 @@ const HomePage = () => {
               borderRadius: "5px",
             }}
           ></div>
-
           <div className="d-flex align-items-center justify-content-center text-center">
             <p className="text-danger my-auto ms-3 fw-bold w-100">Today's</p>
           </div>
@@ -260,6 +365,7 @@ const HomePage = () => {
               ))}
             </div>
           </div>
+
           <div className="flex-end">
             <Button
               className="border-0"
@@ -286,71 +392,75 @@ const HomePage = () => {
             </Button>
           </div>
         </div>
-        <div className="position-relative mt-3">
+        <Container className="position-relative">
           <Slider ref={sliderRef} {...settings}>
             {Products.filter((product) => product.sale > 0).map((product) => (
-              <div key={product.id}>
-                <div
-                  className="border rounded text-center card-hover"
-                  style={{ maxWidth: "270px", maxHeight: "350px" }}
+              <div key={product.id} className="px-2 py-3">
+                <Card
+                  className="card-hover mx-auto"
+                  style={{ maxWidth: "270px", height: "400px" }}
                 >
                   <div
                     className="position-relative"
-                    style={{ backgroundColor: "#f4f4f4", minWidth: "100%" }}
+                    style={{ backgroundColor: "", minWidth: "100%" }}
                   >
-                    <span
-                      className="badge bg-danger position-absolute"
+                    <Badge
+                      bg="danger"
+                      className="position-absolute"
                       style={{ top: "10px", left: "10px" }}
                     >
-                      -{product.sale}
-                    </span>
+                      -{product.sale}%
+                    </Badge>
                     <img
                       src={srcFavor[product.id] ? favorSlt : favor}
                       alt=""
                       className="position-absolute"
-                      style={{ top: "10px", right: "10px" }}
+                      style={{ top: "10px", right: "10px", cursor: "pointer" }}
                       onClick={() => handleSrc(product.id)}
                     />
-                    <img
+                    <Card.Img
+                      variant="top"
                       src={product.image[0]}
-                      alt=""
                       className="img-fluid mx-auto"
-                      style={{ maxHeight: "180px" }}
+                      style={{ height: "180px", objectFit: "contain" }}
                     />
                     <Button
                       variant="dark"
-                      className="w-100 add-to-cart "
+                      className="w-100 add-to-cart"
                       style={{ borderRadius: "0px" }}
                       onClick={() => addToCart(product)}
                     >
                       Add To Cart
                     </Button>
                   </div>
-                  <div
-                    className="p-3"
+                  <Card.Body
+                    className=""
+                    style={{ cursor: "pointer" }}
                     onClick={() => navigate("/detail", { state: { product } })}
                   >
-                    <h6 className="mt-2 text-start">{product.name}</h6>
+                    <Card.Title as="h6" className="mt-2 text-start">
+                      {product.name}
+                    </Card.Title>
                     <div className="d-flex">
-                      <p className="me-3 text-danger">
+                      <Card.Text className="me-3 text-danger fw-bold">
                         ${(product.price * (1 - product.sale / 100)).toFixed(2)}
-                      </p>
-                      <p className="text-muted text-decoration-line-through">
+                      </Card.Text>
+                      <Card.Text className="text-muted text-decoration-line-through">
                         ${product.price}
-                      </p>
+                      </Card.Text>
                     </div>
                     <div>
                       <StarRating rating={product.rating} />
                     </div>
-                  </div>
-                </div>
+                  </Card.Body>
+                </Card>
               </div>
             ))}
           </Slider>
-          <div>
-            <Button className="btn-danger mt-3">View All Products</Button>
+          <div className="text-center mt-4">
+            <Button variant="danger">View All Products</Button>
           </div>
-        </div>
+        </Container>
       </div>
       {/* This month */}
       <div className="w-100" style={{ marginTop: "80px" }}>
@@ -376,60 +486,77 @@ const HomePage = () => {
             <Button className="btn-danger">View All</Button>
           </div>
         </div>
-        <div className="position-relative">
-          <div className="row">
+        <Container className="position-relative">
+          <Slider ref={sliderRef} {...settings}>
             {Products.map((product) => {
               if (product.id <= 6) {
                 return (
-                  <div key={product.id} className="col-lg-2 col-md-4 col-sm-6">
-                    <div
-                      className="border rounded text-center product card-hover"
-                      style={{ maxWidth: "270px", maxHeight: "350px" }}
+                  <div key={product.id} className="px-2 py-3">
+                    <Card
+                      className="card-hover mx-auto"
+                      style={{ maxWidth: "270px", height: "400px" }}
                     >
                       <div
-                        className="position-relative d-flex justify-content-center align-items-center"
-                        style={{
-                          backgroundColor: "#f4f4f4",
-                          minWidth: "100%",
-                          height: "180px",
-                        }}
+                        className="position-relative"
+                        style={{ backgroundColor: "", minWidth: "100%" }}
                       >
-                        <img
+                        <Card.Img
+                          variant="top"
                           src={product.image[0]}
                           alt={product.name}
-                          className="img-fluid"
-                          style={{ maxHeight: "100%", objectFit: "contain" }}
+                          className="img-fluid mx-auto"
+                          style={{ height: "180px", objectFit: "contain" }}
                         />
                         <img
                           src={srcFavor[product.id] ? favorSlt : favor}
                           alt="favorite"
                           className="position-absolute"
-                          style={{ top: "10px", right: "10px" }}
+                          style={{
+                            top: "10px",
+                            right: "10px",
+                            cursor: "pointer",
+                          }}
                           onClick={() => handleSrc(product.id)}
                         />
+                        <Button
+                          variant="dark"
+                          className="w-100 add-to-cart"
+                          style={{ borderRadius: "0px" }}
+                          onClick={() => addToCart(product)}
+                        >
+                          Add To Cart
+                        </Button>
                       </div>
-                      <Button
-                        variant="dark"
-                        className="w-100 add-to-cart"
-                        style={{ borderRadius: "0px" }}
-                        onClick={() => addToCart(product)}
+                      <Card.Body
+                        className=""
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          navigate("/detail", { state: { product } })
+                        }
                       >
-                        Add To Cart
-                      </Button>
-                      <div className="p-3">
-                        <h6 className="mt-2 text-start">{product.name}</h6>
+                        <Card.Title as="h6" className="mt-2 text-start">
+                          {product.name}
+                        </Card.Title>
                         <div className="d-flex">
-                          <p className="me-3 text-danger">${product.price}</p>
+                          <Card.Text className="me-3 text-danger fw-bold">
+                            ${product.price}
+                          </Card.Text>
                         </div>
-                        <StarRating rating={product.rating} />
-                      </div>
-                    </div>
+                        <div>
+                          <StarRating rating={product.rating} />
+                        </div>
+                      </Card.Body>
+                    </Card>
                   </div>
                 );
               }
+              return null;
             })}
+          </Slider>
+          <div className="text-center mt-4">
+            <Button variant="danger">View All Products</Button>
           </div>
-        </div>
+        </Container>
       </div>
 
       {/* Category */}
