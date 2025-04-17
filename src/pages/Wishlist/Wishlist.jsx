@@ -1,48 +1,16 @@
 import { useState, useEffect } from "react";
 import { useCart } from "../Cart/CartContext";
-import { fetchWishlist, fetchRecommendations } from "../../servics/Api";
 import { Card, Button, Row, Col, Container } from "react-bootstrap";
 import { FaShoppingCart, FaEye, FaTrash } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Wishlist.css";
+import { useWishList } from "../../context/WishlistContext";
 
 export function Wishlist() {
   const { addToCart } = useCart();
-  const [wishlist, setWishlist] = useState([]);
+  const {wishlist, setWishlist, updateWishlist} = useWishList();
   const [recommendations, setRecommendations] = useState([]);
   const [showAllRecommendations, setShowAllRecommendations] = useState(false);
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     const fetchedWishlist = await fetchWishlist();
-  //     const fetchedRecommendations = await fetchRecommendations();
-  //     setWishlist(fetchedWishlist.slice(0, 4));
-  //     setRecommendations(fetchedRecommendations.slice(0, 4));
-  //   }
-  //   fetchData();
-  // }, []);
-
-  useEffect(() => {
-    const fetchWishlist = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:5000/api/users/wishlist",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = await response.json();
-        setWishlist(data);
-      } catch (error) {
-        console.error("Lỗi khi lấy wishlist:", error);
-      }
-    };
-
-    fetchWishlist();
-  }, []);
 
   const removeFromWishlist = async (id) => {
     try {

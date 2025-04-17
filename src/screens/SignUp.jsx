@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaGoogle } from 'react-icons/fa';
 import pictureLeft from '../image/picturnLeft.png';
 import axios from 'axios';
@@ -9,6 +9,7 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   // Regex for email validation
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -37,6 +38,11 @@ const SignUp = () => {
         email,
         password,
       });
+
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem('token', res.data.token);
+      navigate("/");
+      window.location.reload();
 
       setMessage(res.data.message);
     } catch (error) {

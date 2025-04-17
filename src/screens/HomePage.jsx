@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRef } from "react";
 import { Button, Card, Carousel, Row } from "react-bootstrap";
 import Slider from "react-slick";
@@ -29,6 +29,8 @@ import StarRating from "../Components/StarRating";
 import axios from "axios";
 import { useCart } from "../pages/Cart/CartContext";
 import { useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { useWishList } from "../context/WishlistContext";
 
 const categories = [
     {
@@ -48,7 +50,7 @@ const categories = [
     },
     {
         id: 4,
-        name: "Tai Nghe",
+        name: "Tai nghe",
         img: [HeadPhone, HeadPhoneWhite]
     },
     {
@@ -73,6 +75,9 @@ const HomePage = () => {
     const [sltCategory, setSltCategory] = useState();
     const {addToCart} = useCart();  
     const navigate = useNavigate();
+    const {wishlist, updateWishlist} = useWishList();
+
+    const idWishlist = new Set(wishlist.map(item => item.id));
 
     //get products
     useEffect(() => {
@@ -86,58 +91,32 @@ const HomePage = () => {
         }
 
         fetchData();
-    }, []);
+    }, []); 
+
+    const filterProduct = sltCategory ? Products.filter((product) => product.category === categories[sltCategory - 1].name) : [];
+
+    //reset srcFavor from wishlist
+    useEffect(() => {
+        const newFavor = {};
+        wishlist.forEach(item => {
+            newFavor[item.id] = true;
+        });
+        setSrcFavor(newFavor);
+    }, [wishlist]);    
 
     //change src when click
     const handleSrc = (id) => {
-        setSrcFavor((srcPrev) => {
-            const updatedFavor = {
-                ...srcPrev,
-                [id]: !srcPrev[id],
-            };
-            return updatedFavor;
-        });
+        const newValue = !srcFavor[id];
     
-        // Chờ state cập nhật rồi mới gọi API
-        setTimeout(() => {
-            updateWishlist(id, !srcFavor[id]);
-        }, 0);
-    };
+        // Cập nhật state
+        setSrcFavor((srcPrev) => ({
+            ...srcPrev,
+            [id]: newValue,
+        }));
     
-
-    const updateWishlist = async (productId, isFavored) => {
-        try {
-
-            const token = localStorage.getItem("token"); // Hoặc context nếu bạn lưu token ở đó
-
-            if (!token) {
-                console.error("Token không tồn tại!"); // Thông báo nếu không tìm thấy token
-                return;
-            }
-
-            console.log(token);
-            console.log(isFavored);
-
-            const response = await axios.post(
-                "http://localhost:5000/api/users/update-wishlist", 
-                {
-                    productId,
-                    isFavored,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`, // Gửi token trong header Authorization
-                    },
-                }
-            );
-            
-            console.log(response.data);
-        } catch (error) {
-            console.error("Error update", error);
-        }
+        // Gọi API riêng, không đặt trong setState
+        updateWishlist(id, newValue);
     };
-
-
 
     //setting for slicker
     const settings = {
@@ -225,7 +204,7 @@ const HomePage = () => {
 
     return (
         <div className="container-fluid contain mb-4 mt-4">
-            <div className="d-flex justify-content-center">
+            <div className="d-flex justify-content-center w-50 mx-auto">
                 <Carousel className="carousel">
                     <Carousel.Item>
                         <img src={banner1} alt="" className="carousel-img"/>
@@ -294,8 +273,12 @@ const HomePage = () => {
                     <Slider ref={sliderRef} {...settings}>
                         {Products.filter(product => product.sale > 0).map((product) => (
                             <div key={product.id}  >
-                                <div className="border rounded text-center card-hover" style={{maxWidth: "270px", maxHeight: "350px"}} >
-                                    <div className="position-relative" style={{backgroundColor: "#f4f4f4", minWidth: "100%"}}>
+                                <div 
+                                    className="border rounded text-center card-hover" 
+                                    style={{maxWidth: "270px", minHeight: "350px", cursor: "pointer"}} 
+                                    onClick={() => navigate('/detail', { state: { product } })}
+                                >
+                                    <div className="bg-white position-relative" style={{backgroundColor: "#f4f4f4", minWidth: "100%"}}>
                                         <span 
                                             className="badge bg-danger position-absolute" 
                                             style={{top: "10px", left: "10px"}}
@@ -303,11 +286,16 @@ const HomePage = () => {
                                             -{product.sale}
                                         </span>
                                         <img 
-                                            src={srcFavor[product.id] ? favorSlt : favor} 
+                                            src={srcFavor.hasOwnProperty(product.id) 
+                                                ? (srcFavor[product.id] ? favorSlt : favor) 
+                                                : (idWishlist.has(product.id) ? favorSlt : favor)} 
                                             alt="" 
                                             className="position-absolute" 
                                             style={{top: "10px", right: "10px"}} 
-                                            onClick={() => handleSrc(product.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleSrc(product.id);
+                                            }}
                                         />
                                         <img 
                                             src={product.image[0]} 
@@ -319,12 +307,15 @@ const HomePage = () => {
                                             variant='dark'
                                             className='w-100 add-to-cart '
                                             style={{borderRadius: "0px"}}
-                                            onClick={() => addToCart(product)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                addToCart(product);
+                                            }}
                                         >
                                             Add To Cart
                                         </Button>
                                     </div>
-                                    <div className="p-3" onClick={() => navigate('/detail', { state: { product } })}>
+                                    <div className="p-3">
                                         <h6 className="mt-2 text-start">{product.name}</h6>
                                         <div className="d-flex">
                                             <p className="me-3 text-danger">${ (product.price * (1 - product.sale / 100)).toFixed(2) }</p>
@@ -376,31 +367,38 @@ const HomePage = () => {
                                     <div key={product.id} className="col-lg-2 col-md-4 col-sm-6">
                                         <div 
                                             className="border rounded text-center product card-hover" 
-                                            style={{ maxWidth: "270px", maxHeight: "350px" }}
+                                            style={{ maxWidth: "270px", maxHeight: "350px", cursor: "pointer"}}
+                                            onClick={() => navigate('/detail', { state: { product } })}
                                         >
                                             <div 
-                                                className="position-relative d-flex justify-content-center align-items-center" 
+                                                className="bg-white position-relative d-flex justify-content-center align-items-center" 
                                                 style={{ backgroundColor: "#f4f4f4", minWidth: "100%", height: "180px" }}
                                             >
                                                 <img 
                                                     src={product.image[0]} 
                                                     alt={product.name} 
-                                                    className="img-fluid" 
+                                                    className="img-fluid d-flex my-auto mt-1" 
                                                     style={{ maxHeight: '100%', objectFit: 'contain' }}
                                                 />
                                                 <img 
-                                                    src={srcFavor[product.id] ? favorSlt : favor} 
+                                                    src={srcFavor[product.id] || idWishlist.has(product.id) ? favorSlt : favor} 
                                                     alt="favorite" 
                                                     className="position-absolute" 
                                                     style={{ top: "10px", right: "10px" }} 
-                                                    onClick={() => handleSrc(product.id)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleSrc(product.id);
+                                                    }}
                                                 />
                                             </div>
                                             <Button
                                                 variant='dark'
                                                 className='w-100 add-to-cart'
                                                 style={{ borderRadius: "0px" }}
-                                                onClick={() => addToCart(product)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    addToCart(product);
+                                                }}
                                             >
                                                 Add To Cart
                                             </Button>
@@ -453,23 +451,93 @@ const HomePage = () => {
                             return (
                                 <div key={category.id}>
                                     <div 
-                                        className="p-5 border rounded" 
+                                        className="d-flex border rounded justify-content-center" 
                                         style={{
-                                            maxWidth: "175px", maxHeight: "145px",
+                                            minWidth: "175px", minHeight: "145px",
                                             backgroundColor: isSelected ? "red" : "transparent",
                                             color: isSelected ? "white" : "black",
                                             cursor: "pointer"
                                         }}
                                         onClick={() => setSltCategory(category.id)}
                                     >
-                                        <img src={isSelected ? category.img[1] : category.img[0]} alt="" className="mx-auto"/>
-                                        <p className="text-center text-truncate">{category.name}</p>
+                                        <div className="my-auto ">
+                                            <img src={isSelected ? category.img[1] : category.img[0]} alt="" className="mx-auto img-fluid"/>
+                                            <p className="text-center text-truncate">{category.name}</p>
+                                        </div>
                                     </div>
                                 </div>
                             )
                         })}
                     </div>
                 </div>
+
+                {/* filtered product */}
+                <AnimatePresence mode="wait">
+                    {sltCategory && (
+                        <motion.div
+                            key={sltCategory}
+                            className="row mt-4"
+                            initial={{opacity: 0, y: 30}}
+                            animate={{opacity: 1, y: 0}}
+                            exit={{opacity: 0, y: -30}}
+                            transition={{duration: 0.5}}
+                        >
+                            {filterProduct.map((product) => {
+                                    return (
+                                        <div key={product.id} className="col-lg-2 col-md-4 col-sm-6">
+                                            <div 
+                                                className="border rounded text-center product card-hover" 
+                                                style={{ maxWidth: "270px", maxHeight: "350px", cursor: "pointer"}}
+                                                onClick={() => navigate('/detail', { state: { product } })}
+                                            >
+                                                <div 
+                                                    className="bg-white position-relative d-flex justify-content-center align-items-center" 
+                                                    style={{ backgroundColor: "#f4f4f4", minWidth: "100%", height: "180px" }}
+                                                >
+                                                    <img 
+                                                        src={product.image[0]} 
+                                                        alt={product.name} 
+                                                        className="img-fluid d-flex my-auto mt-1" 
+                                                        style={{ maxHeight: '100%', objectFit: 'contain' }}
+                                                    />
+                                                    <img 
+                                                        src={srcFavor[product.id] || idWishlist.has(product.id) ? favorSlt : favor} 
+                                                        alt="favorite" 
+                                                        className="position-absolute" 
+                                                        style={{ top: "10px", right: "10px" }} 
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleSrc(product.id);
+                                                        }}
+                                                    />
+                                                </div>
+                                                <Button
+                                                    variant='dark'
+                                                    className='w-100 add-to-cart'
+                                                    style={{ borderRadius: "0px" }}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        addToCart(product);
+                                                    }}
+                                                >
+                                                    Add To Cart
+                                                </Button>
+                                                <div className="p-3">
+                                                    <h6 className="mt-2 text-start">{product.name}</h6>
+                                                    <div className="d-flex">
+                                                        <p className="me-3 text-danger">${product.price}</p>
+                                                    </div>
+                                                    <StarRating rating={product.rating} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+                            )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
             </div>
             <hr />
 
@@ -525,9 +593,10 @@ const HomePage = () => {
                             <div key={product.id}>
                                 <div 
                                     className="border rounded text-center mt-3 product card-hover" 
-                                    style={{maxWidth: "270px", maxHeight: "350px"}}
+                                    style={{maxWidth: "270px", maxHeight: "350px", cursor: "pointer"}}
+                                    onClick={() => navigate('/detail', { state: { product } })}
                                 >
-                                    <div className="position-relative" style={{backgroundColor: "#f4f4f4", minWidth: "100%"}}>
+                                    <div className="position-relative bg-white" style={{backgroundColor: "#f4f4f4", minWidth: "100%"}}>
                                         {/* <span 
                                             className="badge bg-danger position-absolute" 
                                             style={{top: "10px", left: "10px"}}
@@ -535,18 +604,24 @@ const HomePage = () => {
                                             -{product.sale}
                                         </span> */}
                                         <img 
-                                            src={srcFavor[product.id] ? favorSlt : favor} 
+                                            src={srcFavor[product.id] || idWishlist.has(product.id) ? favorSlt : favor} 
                                             alt="" 
                                             className="position-absolute" 
                                             style={{top: "10px", right: "10px"}} 
-                                            onClick={() => handleSrc(product.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleSrc(product.id)
+                                            }}
                                         />
-                                        <img src={product.image[0]} alt="" className="img-fluid mx-auto" style={{maxHeight: "180px"}}/>
+                                        <img src={product.image[0]} alt="" className="img-fluid mx-auto mt-1" style={{maxHeight: "180px"}}/>
                                         <Button
                                             variant='dark'
                                             className='w-100 add-to-cart '
                                             style={{borderRadius: "0px"}}
-                                            onClick={() => addToCart(product)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                addToCart(product)
+                                            }}
                                         >
                                             Add To Cart
                                         </Button>
