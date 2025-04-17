@@ -1,0 +1,116 @@
+/* SearchPage.css */
+
+/* Product card styling */
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Product image container */
+.product-img-container {
+  position: relative;
+}
+
+.product-img {
+  transition: transform 0.3s ease;
+}
+
+/* Favorite icon */
+.favorite-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.favorite-icon:hover {
+  transform: scale(1.2);
+}
+
+/* Product overlay effect */
+.product-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 0;
+  transition: 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-img-container:hover .product-overlay {
+  height: 40%;
+}
+
+/* Product title */
+.product-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Add to cart button */
+.add-to-cart-btn {
+  opacity: 0.9;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  background-color: #db4444;
+  border: none;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #db4444;
+
+  opacity: 1;
+}
+
+/* Pagination styling */
+.pagination .page-item.active .page-link {
+  background-color: #f85959;
+  border-color: #db4444;
+}
+
+.pagination .page-link {
+  color: black;
+}
+
+.pagination .page-link:hover {
+  background-color: #e9ecef;
+}
+
+/* Loading spinner */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Empty search results */
+.bi-search {
+  color: #6c757d;
+}
+
+/* Search result header */
+.text-primary {
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .product-card {
+    margin-bottom: 1rem;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

@@ -2,135 +2,247 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Button } from "react-bootstrap";
+import {
+  Button,
+  Pagination,
+  Card,
+  Container,
+  Row,
+  Col,
+  Badge,
+} from "react-bootstrap";
 import StarRating from "../Components/StarRating";
-import favor from "../assets/image/TymUnSlt.png"
-import favorSlt from "../assets/image/TymSlt.png"
+import favor from "../assets/image/TymUnSlt.png";
+import favorSlt from "../assets/image/TymSlt.png";
+import "../assets/style/SearchPage.css"; // Import the separate CSS file
 
 const SearchPage = () => {
-    const [products, setProducts] = useState([]);
-    const location = useLocation();
-    const searchKey = location.state?.searchKey?.toLowerCase() || "";
-    const [srcFavor, setSrcFavor] = useState({});
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const location = useLocation();
+  const searchKey = location.state?.searchKey?.toLowerCase() || "";
+  const [srcFavor, setSrcFavor] = useState({});
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await axios.get("http://localhost:5000/api/products/get-products");
-                setProducts(res.data);
-            } catch (error) {
-                console.error("Lỗi khi lấy sản phẩm: ", error);
-            }
-        };
-        fetchData();
-    }, []);
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(8);
 
-    // Lọc sản phẩm theo từ khóa
-    const filteredProducts = products.filter(product => 
-        product.name.toLowerCase().includes(searchKey)
-    );
-
-    const handleSrc = (id) => {
-        setSrcFavor((srcPrev) => {
-            const updatedFavor = {
-                ...srcPrev,
-                [id]: !srcPrev[id],
-            };
-            return updatedFavor;
-        });
-    
-        // Chờ state cập nhật rồi mới gọi API
-        setTimeout(() => {
-            updateWishlist(id, !srcFavor[id]);
-        }, 0);
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          "http://localhost:5000/api/products/get-products"
+        );
+        setProducts(res.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Lỗi khi lấy sản phẩm: ", error);
+        setError("Failed to load products. Please try again later.");
+        setLoading(false);
+      }
     };
-    
+    fetchData();
+  }, []);
 
-    const updateWishlist = async (productId, isFavored) => {
-        try {
+  // Lọc sản phẩm theo từ khóa
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchKey)
+  );
 
-            const token = localStorage.getItem("token"); // Hoặc context nếu bạn lưu token ở đó
+  // Get current products for pagination
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
 
-            if (!token) {
-                console.error("Token không tồn tại!"); // Thông báo nếu không tìm thấy token
-                return;
-            }
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-            console.log(token);
-            console.log(isFavored);
+  const handleSrc = (id) => {
+    setSrcFavor((srcPrev) => {
+      const updatedFavor = {
+        ...srcPrev,
+        [id]: !srcPrev[id],
+      };
+      return updatedFavor;
+    });
 
-            const response = await axios.post(
-                "http://localhost:5000/api/users/update-wishlist", 
-                {
-                    productId,
-                    isFavored,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`, // Gửi token trong header Authorization
-                    },
-                }
-            );
-            
-            console.log(response.data);
-        } catch (error) {
-            console.error("Error update", error);
+    // Chờ state cập nhật rồi mới gọi API
+    setTimeout(() => {
+      updateWishlist(id, !srcFavor[id]);
+    }, 0);
+  };
+
+  const updateWishlist = async (productId, isFavored) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.error("Token không tồn tại!");
+        return;
+      }
+
+      const response = await axios.post(
+        "http://localhost:5000/api/users/update-wishlist",
+        {
+          productId,
+          isFavored,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-    };
+      );
 
-    return (
-        <div className="container mt-4 mb-5">
-            <h2 className="text-center mb-4">Search Results for: "{searchKey}"</h2>
-            {filteredProducts.length > 0 ? (
-                <div className="row">
-                    {filteredProducts.map(product => (
-                        <div key={product.id} className="col-lg-2 col-md-4 col-sm-6 mb-3">
-                            <div 
-                                className="border rounded text-center product card-hover" 
-                                style={{ maxWidth: "270px", maxHeight: "350px" }}
-                            >
-                                <div 
-                                    className="position-relative d-flex justify-content-center align-items-center" 
-                                    style={{ backgroundColor: "#f4f4f4", minWidth: "100%", height: "180px" }}
-                                >
-                                    <img 
-                                        src={product.image[0]} 
-                                        alt={product.name} 
-                                        className="img-fluid" 
-                                        style={{ maxHeight: '100%', objectFit: 'contain' }}
-                                    />
-                                    <img 
-                                        src={srcFavor[product.id] ? favorSlt : favor} 
-                                        alt="favorite" 
-                                        className="position-absolute" 
-                                        style={{ top: "10px", right: "10px" }} 
-                                        onClick={() => handleSrc(product.id)}
-                                    />
-                                </div>
-                                <Button
-                                    variant='dark'
-                                    className='w-100 add-to-cart'
-                                    style={{ borderRadius: "0px" }}
-                                    onClick={() => addToCart(product)}
-                                >
-                                    Add To Cart
-                                </Button>
-                                <div className="p-3">
-                                    <h6 className="mt-2 text-start">{product.name}</h6>
-                                    <div className="d-flex">
-                                        <p className="me-3 text-danger">${product.price}</p>
-                                    </div>
-                                    <StarRating rating={product.rating} />
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <p className="text-center">No products found.</p>
-            )}
-        </div>
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error update", error);
+    }
+  };
+
+  const addToCart = (product) => {
+    // Implementation for adding to cart
+    console.log("Adding to cart:", product);
+  };
+
+  // Create pagination items
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  let paginationItems = [];
+
+  for (let number = 1; number <= totalPages; number++) {
+    paginationItems.push(
+      <Pagination.Item
+        key={number}
+        active={number === currentPage}
+        onClick={() => paginate(number)}
+      >
+        {number}
+      </Pagination.Item>
     );
+  }
+
+  if (loading) {
+    return (
+      <Container className="mt-5 text-center">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p className="mt-3">Loading products...</p>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="mt-5 text-center">
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      </Container>
+    );
+  }
+
+  return (
+    <Container className="py-5">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="mb-0">
+          Search Results for: <span className="text-danger">"{searchKey}"</span>
+        </h2>
+        <Badge bg="danger" className="px-5 py-3">
+          <span style={{ fontSize: "15px" }}>
+            {filteredProducts.length} products found
+          </span>
+        </Badge>
+      </div>
+
+      {filteredProducts.length > 0 ? (
+        <>
+          <Row className="g-4">
+            {currentProducts.map((product) => (
+              <Col key={product.id} xl={3} lg={4} md={6} sm={6}>
+                <Card className="h-100 product-card shadow-sm border-0">
+                  <div className="position-relative overflow-hidden product-img-container">
+                    <Card.Img
+                      variant="top"
+                      src={product.image[0]}
+                      alt={product.name}
+                      className="product-img p-3"
+                      style={{ height: "200px", objectFit: "contain" }}
+                    />
+                    <div
+                      className="favorite-icon"
+                      onClick={() => handleSrc(product.id)}
+                    >
+                      <img
+                        src={srcFavor[product.id] ? favorSlt : favor}
+                        alt="favorite"
+                        width="24"
+                        height="24"
+                      />
+                    </div>
+                    <div className="product-overlay">
+                      <Button
+                        className="add-to-cart-btn"
+                        onClick={() => addToCart(product)}
+                      >
+                        Add To Cart
+                      </Button>
+                    </div>
+                  </div>
+                  <Card.Body className="d-flex flex-column">
+                    <Card.Title className="product-title h6 mb-2">
+                      {product.name}
+                    </Card.Title>
+                    <div className="mt-auto">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="text-danger fw-bold">
+                          ${product.price}
+                        </span>
+                        <StarRating rating={product.rating} />
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+
+          {/* Pagination */}
+          <div className="d-flex justify-content-center mt-5">
+            <Pagination>
+              <Pagination.Prev
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              />
+              {paginationItems}
+              <Pagination.Next
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+              />
+            </Pagination>
+          </div>
+        </>
+      ) : (
+        <div className="text-center py-5">
+          <div className="mb-4">
+            <i className="bi bi-search" style={{ fontSize: "3rem" }}></i>
+          </div>
+          <h3>No products found</h3>
+          <p className="text-muted">
+            We couldn't find any products matching "{searchKey}". Try different
+            keywords or browse our categories.
+          </p>
+        </div>
+      )}
+    </Container>
+  );
 };
 
 export default SearchPage;
