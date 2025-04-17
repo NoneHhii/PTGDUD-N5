@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { useCart } from '../Cart/CartContext';
 import { Form, Table, Button, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import MapSelectLocation from '../../Components/MapSelectLocation';
 
 export function Checkout() {
   const { cart } = useCart();
+  const [selectedPosition, setSelectedPosition] = useState(null);
+
   const totalPrice = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -42,6 +45,16 @@ export function Checkout() {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: errorMessage }));
   };
 
+  const handleLocationSelect = (position) => {
+    setSelectedPosition(position);
+    console.log("Địa chỉ đã chọn:", position);
+  };
+
+  const handleAddressSelect = (addressData) => {
+    setAddress(addressData);
+    console.log('Địa chỉ đã điền:', addressData);
+  };
+
   return (
     <div className='container p-4'>
       <h2 className='mb-5'>Billing Details</h2>
@@ -64,11 +77,6 @@ export function Checkout() {
                   {errors.firstName}
                 </Form.Text>
               )}
-            </Form.Group>
-
-            <Form.Group className='mb-3'>
-              <Form.Label>Company Name</Form.Label>
-              <Form.Control type='text' className='bg-light text-dark' />
             </Form.Group>
 
             <Form.Group className='mb-3'>
@@ -109,6 +117,11 @@ export function Checkout() {
                 <Form.Text className='text-danger'>{errors.city}</Form.Text>
               )}
             </Form.Group>
+
+            <MapSelectLocation 
+              onLocationSelect={handleLocationSelect} 
+              onAddressSelect={handleAddressSelect} 
+            />
 
             <Form.Group className='mb-3'>
               <Form.Label>
@@ -165,7 +178,7 @@ export function Checkout() {
                     }}
                   >
                     <img
-                      src={item.image}
+                      src={item.image[0]}
                       alt={item.name}
                       // height='50'
                       width={50}
@@ -197,19 +210,19 @@ export function Checkout() {
             </tbody>
           </Table>
 
-          <h5 className='mt-4'>Payment Method</h5>
+          <h5 className='mt-4 text-start'>Payment Method</h5>
           <Form>
             <Form.Check
               type='radio'
               label='Bank'
               name='payment'
-              className='mb-2'
+              className='mb-2 text-start'
             />
             <Form.Check
               type='radio'
               label='Cash on delivery'
               name='payment'
-              className='mb-3'
+              className='mb-3 text-start'
               defaultChecked
             />
           </Form>

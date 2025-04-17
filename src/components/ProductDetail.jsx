@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import StarReview from "./StarReview";
 import favor from "../assets/image/TymUnSlt.png"
 import favorSlt from "../assets/image/TymSlt.png"
+import { useEffect } from "react";
 
 const colors = [
   { id: 1, name: "Red", hex: "#ff0000" },
@@ -22,6 +23,10 @@ const ProductDetail = ({ product }) => {
 
   const [numOfProduct, setNumOfProduct] = useState(1);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const handleSrc = (id) => {
     setSrcFavor((srcPrev) => {
         const updatedFavor = {
@@ -35,54 +40,55 @@ const ProductDetail = ({ product }) => {
     setTimeout(() => {
         updateWishlist(id, !srcFavor[id]);
     }, 0);
-};
+  };
 
 
-const updateWishlist = async (productId, isFavored) => {
-    try {
+  const updateWishlist = async (productId, isFavored) => {
+      try {
 
-        const token = localStorage.getItem("token"); // Hoặc context nếu bạn lưu token ở đó
+          const token = localStorage.getItem("token"); // Hoặc context nếu bạn lưu token ở đó
 
-        if (!token) {
-            console.error("Token không tồn tại!"); // Thông báo nếu không tìm thấy token
-            return;
-        }
+          if (!token) {
+              console.error("Token không tồn tại!"); // Thông báo nếu không tìm thấy token
+              return;
+          }
 
-        console.log(token);
-        console.log(isFavored);
+          console.log(token);
+          console.log(isFavored);
 
-        const response = await axios.post(
-            "http://localhost:5000/api/users/update-wishlist", 
-            {
-                productId,
-                isFavored,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`, // Gửi token trong header Authorization
-                },
-            }
-        );
-        
-        console.log(response.data);
-    } catch (error) {
-        console.error("Error update", error);
-    }
-};
+          const response = await axios.post(
+              "http://localhost:5000/api/users/update-wishlist", 
+              {
+                  productId,
+                  isFavored,
+              },
+              {
+                  headers: {
+                      Authorization: `Bearer ${token}`, // Gửi token trong header Authorization
+                  },
+              }
+          );
+          
+          console.log(response.data);
+      } catch (error) {
+          console.error("Error update", error);
+      }
+  };
 
   return (
-    <div className="d-flex justify-content-center">
-      <div className="d-flex flex-column me-4">
+    <div className="d-flex justify-content-center row">
+      <div classname="col-md-1"></div>
+      <div className="d-flex flex-column me-4 col-md-2">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-light p-3 mb-3 text-center">
+          <div key={i} className="py-1 mb-2 text-center border">
             <img src={product.image[i]} alt="extra" className="img-fluid mx-auto" style={{maxHeight: "138px"}}/>
           </div>
         ))}
       </div>
-      <div className="bg-light p-3 me-4">
-        <img src={product.image[0]} alt="mainproduct" className="img-fluid mx-auto" />
+      <div className="border d-flex me-4 col-md-4">
+        <img src={product.image[0]} alt="mainproduct" className="img-fluid my-auto" />
       </div>
-      <div className="flex-grow-1">
+      <div className="col-md-4">
         <h1 className="h4 fw-bold">{product?.name}</h1>
         <div className="d-flex align-items-center my-3">
           <StarReview star={product?.rating} text={`${product?.stock} Reviews`} />
@@ -124,7 +130,7 @@ const updateWishlist = async (productId, isFavored) => {
             <img 
                 src={srcFavor[product.id] ? favorSlt : favor} 
                 alt="" 
-                className="position-absolute" 
+                className="" 
                 style={{top: "10px", right: "10px"}} 
                 onClick={() => handleSrc(product.id)}
             />
@@ -147,6 +153,7 @@ const updateWishlist = async (productId, isFavored) => {
           </div>
         </div>
       </div>
+      <div classname="col-md-1"></div>
     </div>
   );
 };
